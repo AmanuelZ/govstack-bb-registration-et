@@ -1,0 +1,331 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// USERS & IDENTITY
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Local user record linked to a Fayda PSUT (Pairwise Subject Token).
+/// Created or updated on first successful Fayda authentication.
+model User {
+  id          String    @id @default(uuid()) @map("id")
+  faydaPsut   String    @unique @map("fayda_psut") // Fayda PSUT (sub claim from eSignet)
+  faydaFin    String?   @map("fayda_fin") // Encrypted: AES-256-GCM
+  fullName    String    @map("full_name")
+  fullNameAm  String?   @map("full_name_am") // Amharic name
+  email       String?   @map("email")
+  phoneNumber String?   @map("phone_number") // Encrypted: AES-256-GCM
+  roles       String[]  @default(["applicant"]) @map("roles")
+  isActive    Boolean   @default(true) @map("is_active")
+  lastLoginAt DateTime? @map("last_login_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  applications  Application[]
+  assignedTasks Task[]        @relation("AssignedTo")
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SERVICE DEFINITIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A registration service offered through this Building Block.
+/// Corresponds to GovStack Registration BB "Service" entity.
+model Service {
+  id            String   @id @default(uuid()) @map("id")
+  code          String   @unique @map("code") // e.g. "et-business-registration-plc"
+  nameEn        String   @map("name_en")
+  nameAm        String   @map("name_am")
+  descriptionEn String   @map("description_en")
+  descriptionAm String   @map("description_am")
+  ministryEn    String   @map("ministry_en") // Responsible ministry
+  ministryAm    String   @map("ministry_am")
+  isActive      Boolean  @default(true) @map("is_active")
+  estimatedDays Int      @map("estimated_days") // SLA in business days
+  validityMonths Int?    @map("validity_months") // Certificate validity
+  metadata      Json     @default("{}") @map("metadata") // Extensible service-specific data
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  eForms        EForm[]
+  workflowSteps WorkflowStep[]
+  roles         ServiceRole[]
+  fees          Fee[]
+  applications  Application[]
+
+  @@map("services")
+}
+
+/// Dynamic e-form schema for a registration service.
+/// The schema field contains a JSON Schema-compatible form definition
+/// with bilingual labels and validation rules.
+model EForm {
+  id        String   @id @default(uuid()) @map("id")
+  serviceId String   @map("service_id")
+  version   Int      @default(1) @map("version")
+  titleEn   String   @map("title_en")
+  titleAm   String   @map("title_am")
+  schema    Json     @map("schema") // JSON Schema with form field definitions
+  uiSchema  Json     @default("{}") @map("ui_schema") // UI rendering hints
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@unique([serviceId, version])
+  @@map("eforms")
+}
+
+/// Workflow step definition — state machine node for a service.
+model WorkflowStep {
+  id             String   @id @default(uuid()) @map("id")
+  serviceId      String   @map("service_id")
+  stepCode       String   @map("step_code") // e.g. "name-review"
+  stepOrder      Int      @map("step_order")
+  nameEn         String   @map("name_en")
+  nameAm         String   @map("name_am")
+  assignedRole   String   @map("assigned_role") // Role responsible for this step
+  slaHours       Int      @default(48) @map("sla_hours")
+  isTerminal     Boolean  @default(false) @map("is_terminal")
+  allowedActions String[] @map("allowed_actions") // APPROVE, REJECT, SEND_BACK, REQUEST_INFO
+  nextStepCode   String?  @map("next_step_code")
+  metadata       Json     @default("{}") @map("metadata")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@unique([serviceId, stepCode])
+  @@map("workflow_steps")
+}
+
+/// Roles defined for a service — maps to operator positions.
+model ServiceRole {
+  id         String   @id @default(uuid()) @map("id")
+  serviceId  String   @map("service_id")
+  roleCode   String   @map("role_code") // e.g. "name-reviewer"
+  nameEn     String   @map("name_en")
+  nameAm     String   @map("name_am")
+  isOperator Boolean  @default(true) @map("is_operator")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@unique([serviceId, roleCode])
+  @@map("service_roles")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FEES & PAYMENTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Fee definition for a service — fixed or calculated.
+model Fee {
+  id         String   @id @default(uuid()) @map("id")
+  serviceId  String   @map("service_id")
+  feeCode    String   @map("fee_code")
+  nameEn     String   @map("name_en")
+  nameAm     String   @map("name_am")
+  feeType    String   @map("fee_type") // "FIXED" | "CALCULATED" | "CONDITIONAL"
+  amountEtb  Decimal? @map("amount_etb") // For FIXED fees — in Ethiopian Birr
+  formula    String?  @map("formula") // For CALCULATED fees — expression
+  conditions Json?    @map("conditions") // For CONDITIONAL fees — rule tree
+  isRequired Boolean  @default(true) @map("is_required")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  service  Service   @relation(fields: [serviceId], references: [id])
+  payments Payment[]
+
+  @@unique([serviceId, feeCode])
+  @@map("fees")
+}
+
+/// Payment record — links an application to a Payment BB transaction.
+model Payment {
+  id            String    @id @default(uuid()) @map("id")
+  applicationId String    @map("application_id")
+  feeId         String    @map("fee_id")
+  amountEtb     Decimal   @map("amount_etb")
+  status        String    @default("PENDING") @map("status") // PENDING | COMPLETED | FAILED | REFUNDED
+  paymentBbRef  String?   @map("payment_bb_ref") // Payment BB transaction ID
+  paymentMethod String?   @map("payment_method")
+  paidAt        DateTime? @map("paid_at")
+  metadata      Json      @default("{}") @map("metadata")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  application Application @relation(fields: [applicationId], references: [id])
+  fee         Fee         @relation(fields: [feeId], references: [id])
+
+  @@map("payments")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// APPLICATIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A submitted registration application.
+/// The `fileId` is the GovStack Registration BB canonical identifier.
+model Application {
+  id             String    @id @default(uuid()) @map("id")
+  fileId         String    @unique @default(uuid()) @map("file_id") // GovStack fileId
+  serviceId      String    @map("service_id")
+  eFormVersion   Int       @default(1) @map("eform_version")
+  applicantId    String    @map("applicant_id") // User.id
+  status         String    @default("PENDING") @map("status") // ApplicationStatus
+  currentStep    String?   @map("current_step") // WorkflowStep.stepCode
+  formData       Json      @map("form_data") // Submitted form values
+  calculatedFees Json      @default("{}") @map("calculated_fees") // Fee calculation results
+  registryRef    String?   @map("registry_ref") // Digital Registries BB ref
+  certificateUrl String?   @map("certificate_url") // Issued certificate URL
+  expiresAt      DateTime? @map("expires_at") // Certificate expiry
+  submittedAt    DateTime  @default(now()) @map("submitted_at")
+  completedAt    DateTime? @map("completed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  service       Service                    @relation(fields: [serviceId], references: [id])
+  applicant     User                       @relation(fields: [applicantId], references: [id])
+  documents     ApplicationDocument[]
+  tasks         Task[]
+  payments      Payment[]
+  statusHistory ApplicationStatusHistory[]
+
+  @@map("applications")
+}
+
+/// Immutable status change record for an application.
+model ApplicationStatusHistory {
+  id            String   @id @default(uuid()) @map("id")
+  applicationId String   @map("application_id")
+  fromStatus    String?  @map("from_status")
+  toStatus      String   @map("to_status")
+  changedById   String   @map("changed_by_id")
+  reason        String?  @map("reason")
+  correlationId String   @map("correlation_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  application Application @relation(fields: [applicationId], references: [id])
+
+  @@map("application_status_history")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOCUMENTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A supporting document uploaded with an application.
+model ApplicationDocument {
+  id            String    @id @default(uuid()) @map("id")
+  applicationId String    @map("application_id")
+  documentType  String    @map("document_type") // e.g. "MOA_AOA", "TAX_CLEARANCE"
+  originalName  String    @map("original_name")
+  storagePath   String    @map("storage_path") // Internal storage path (not exposed in API)
+  mimeType      String    @map("mime_type")
+  sizeBytes     Int       @map("size_bytes")
+  checksum      String    @map("checksum") // SHA-256 hex
+  uploadedById  String    @map("uploaded_by_id")
+  verifiedAt    DateTime? @map("verified_at")
+  verifiedById  String?   @map("verified_by_id")
+  isRequired    Boolean   @default(true) @map("is_required")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  application Application @relation(fields: [applicationId], references: [id])
+
+  @@map("application_documents")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TASKS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A back-office operator task generated by workflow state transitions.
+model Task {
+  id            String    @id @default(uuid()) @map("id")
+  applicationId String    @map("application_id")
+  workflowStep  String    @map("workflow_step") // WorkflowStep.stepCode
+  assignedRole  String    @map("assigned_role")
+  assignedToId  String?   @map("assigned_to_id") // User.id (optional — can be role-only)
+  status        String    @default("PENDING") @map("status") // TaskStatus
+  priority      Int       @default(0) @map("priority") // Higher = more urgent
+  dueAt         DateTime? @map("due_at") // SLA deadline
+  completedAt   DateTime? @map("completed_at")
+  completedById String?   @map("completed_by_id")
+  action        String?   @map("action") // TaskAction taken
+  comment       String?   @map("comment") // Operator comment
+  formVariables Json      @default("{}") @map("form_variables") // Pre-filled form data for operator
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  application Application @relation(fields: [applicationId], references: [id])
+  assignedTo  User?       @relation("AssignedTo", fields: [assignedToId], references: [id])
+
+  @@map("tasks")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUDIT & COMPLIANCE
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Immutable audit trail — GovStack CFR 5.1.2.
+/// All writes via AuditLogger class — never direct Prisma writes.
+model AuditLog {
+  id            String   @id @default(uuid()) @map("id")
+  timestamp     DateTime @default(now()) @map("timestamp")
+  actorId       String   @map("actor_id")
+  action        String   @map("action") // AuditAction
+  resourceType  String   @map("resource_type")
+  resourceId    String   @map("resource_id")
+  oldValue      Json?    @map("old_value")
+  newValue      Json?    @map("new_value")
+  ipAddress     String?  @map("ip_address")
+  correlationId String   @map("correlation_id")
+
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([resourceType, resourceId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REFERENCE DATA
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Ethiopian Standard Industrial Classification codes.
+/// Used in business registration (business_sector) and manufacturing permit (manufacturing_sector).
+model EsicCode {
+  id          String   @id @default(uuid()) @map("id")
+  code        String   @unique @map("code") // e.g. "C10.1"
+  sectionCode String   @map("section_code") // e.g. "C"
+  sectionEn   String   @map("section_en") // e.g. "Manufacturing"
+  sectionAm   String   @map("section_am")
+  divisionEn  String   @map("division_en") // e.g. "Manufacture of food products"
+  divisionAm  String   @map("division_am")
+  groupEn     String?  @map("group_en")
+  groupAm     String?  @map("group_am")
+  classEn     String?  @map("class_en")
+  classAm     String?  @map("class_am")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("esic_codes")
+}

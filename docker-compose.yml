@@ -1,0 +1,102 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: govstack-registration-app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      HOST: 0.0.0.0
+      LOG_LEVEL: debug
+      DATABASE_URL: postgresql://govstack:govstack@postgres:5432/govstack_registration
+      REDIS_URL: redis://redis:6379
+      FAYDA_ISSUER_URL: http://mock-fayda:4011
+      FAYDA_CLIENT_ID: govstack-registration-et
+      FAYDA_REDIRECT_URI: http://localhost:3000/api/v1/auth/callback
+      JWT_SECRET: dev-only-change-me-in-production-minimum-32-chars
+      IM_VALIDATE_CLIENTS: "false"
+      MOCK_FAYDA_ENABLED: "true"
+      SEED_TEST_DATA: "true"
+    volumes:
+      - ./src:/app/src:ro
+      - ./prisma:/app/prisma:ro
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - govstack-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: govstack-postgres
+    environment:
+      POSTGRES_USER: govstack
+      POSTGRES_PASSWORD: govstack
+      POSTGRES_DB: govstack_registration
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U govstack -d govstack_registration"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - govstack-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: govstack-redis
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - govstack-net
+
+  mock-fayda:
+    image: node:20-alpine
+    container_name: govstack-mock-fayda
+    working_dir: /app
+    command: >
+      sh -c "npm install && node server.js"
+    ports:
+      - "4011:4011"
+    environment:
+      PORT: 4011
+      ISSUER: http://mock-fayda:4011
+    volumes:
+      - ./mock-fayda:/app
+      - mock-fayda-modules:/app/node_modules
+    restart: unless-stopped
+    networks:
+      - govstack-net
+
+volumes:
+  postgres-data:
+  redis-data:
+  mock-fayda-modules:
+  uploads:
+
+networks:
+  govstack-net:
+    driver: bridge

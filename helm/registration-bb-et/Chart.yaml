@@ -1,0 +1,20 @@
+apiVersion: v2
+name: registration-bb-et
+description: GovStack Registration Building Block — Ethiopian Reference Implementation
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - govstack
+  - registration
+  - ethiopia
+  - digital-public-goods
+home: https://github.com/AmanuelZ/govstack-bb-registration-et
+sources:
+  - https://github.com/AmanuelZ/govstack-bb-registration-et
+maintainers:
+  - name: Amanuel Zewdu Kebede
+    url: https://github.com/AmanuelZ
+annotations:
+  category: Government
+  licenses: MIT

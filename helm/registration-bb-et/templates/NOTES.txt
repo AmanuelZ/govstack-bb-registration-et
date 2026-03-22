@@ -1,0 +1,31 @@
+REGISTRATION BB — ETHIOPIAN REFERENCE IMPLEMENTATION
+=====================================================
+
+Your GovStack Registration Building Block has been deployed!
+
+1. Get the application URL:
+{{- if .Values.ingress.enabled }}
+  http{{ if .Values.ingress.tls }}s{{ end }}://{{ (index .Values.ingress.hosts 0).host }}/api/v1/health
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "registration-bb-et.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo "http://$NODE_IP:$NODE_PORT"
+{{- else if contains "ClusterIP" .Values.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "registration-bb-et.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 3000:3000
+  echo "API: http://localhost:3000/api/v1"
+  echo "Swagger: http://localhost:3000/docs"
+{{- end }}
+
+2. Required secret (registration-bb-et-secrets):
+  kubectl create secret generic registration-bb-et-secrets \
+    --from-literal=DATABASE_URL="postgresql://..." \
+    --from-literal=REDIS_URL="redis://..." \
+    --from-literal=JWT_SECRET="<32+ chars>" \
+    --from-literal=FAYDA_CLIENT_ID="..." \
+    --from-literal=FAYDA_REDIRECT_URI="https://your-domain/api/v1/auth/callback" \
+    --from-literal=FAYDA_ISSUER_URL="https://esignet.fayda.et"
+
+3. GovStack Information Mediator:
+  All API calls (except /health, /ready, /docs, /auth) require:
+  Information-Mediator-Client: ET/GOV/<MEMBER_CODE>/<SUBSYSTEM>

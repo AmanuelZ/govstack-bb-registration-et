@@ -1,0 +1,10 @@
+{
+  "name": "mock-fayda-esignet",
+  "version": "1.0.0",
+  "description": "Mock eSignet OIDC provider for local development and testing",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.21.0",
+    "jose": "^5.9.6"
+  }
+}

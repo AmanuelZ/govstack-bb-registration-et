@@ -1,0 +1,85 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    command: >
+      sh -c "
+        npx prisma generate &&
+        npx prisma db push --accept-data-loss &&
+        npm run test:coverage
+      "
+    environment:
+      NODE_ENV: test
+      PORT: 3000
+      HOST: 0.0.0.0
+      LOG_LEVEL: silent
+      DATABASE_URL: postgresql://govstack:govstack@postgres-test:5432/govstack_registration_test
+      REDIS_URL: redis://redis-test:6379
+      FAYDA_ISSUER_URL: http://mock-fayda-test:4011
+      FAYDA_CLIENT_ID: govstack-test
+      FAYDA_REDIRECT_URI: http://localhost:3000/api/v1/auth/callback
+      JWT_SECRET: test-only-secret-minimum-32-chars-long
+      IM_VALIDATE_CLIENTS: "false"
+      MOCK_FAYDA_ENABLED: "true"
+      SEED_TEST_DATA: "false"
+    volumes:
+      - ./src:/app/src:ro
+      - ./prisma:/app/prisma:ro
+      - ./test:/app/test:ro
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    networks:
+      - test-net
+
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: govstack
+      POSTGRES_PASSWORD: govstack
+      POSTGRES_DB: govstack_registration_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U govstack -d govstack_registration_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - test-net
+
+  redis-test:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - test-net
+
+  mock-fayda-test:
+    image: node:20-alpine
+    container_name: govstack-mock-fayda-test
+    working_dir: /app
+    command: >
+      sh -c "npm install && node server.js"
+    environment:
+      PORT: 4011
+      ISSUER: http://mock-fayda-test:4011
+    volumes:
+      - ./mock-fayda:/app
+      - mock-fayda-test-modules:/app/node_modules
+    networks:
+      - test-net
+
+volumes:
+  mock-fayda-test-modules:
+
+networks:
+  test-net:
+    driver: bridge
