@@ -27,7 +27,10 @@ export function getPrismaClient(): PrismaClient {
     if (config.nodeEnv === 'development') {
       // Type cast needed: Prisma v5 $on types are only available when log is configured with emit:'event'
       const devClient = prismaInstance as PrismaClient & {
-        $on(event: 'query', cb: (e: { query: string; params: string; duration: number }) => void): void;
+        $on(
+          event: 'query',
+          cb: (e: { query: string; params: string; duration: number }) => void,
+        ): void;
       };
       devClient.$on('query', (e) => {
         logger.debug({ query: e.query, params: e.params, duration: e.duration }, 'DB query');

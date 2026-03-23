@@ -1,7 +1,11 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
 import { AppError } from '../../common/errors.js';
 import type { PaginatedResponse } from '../../common/types.js';
-import type { SubmitApplicationBody, ApplicationListQuery, UpdateApplicationBody } from './application.schema.js';
+import type {
+  SubmitApplicationBody,
+  ApplicationListQuery,
+  UpdateApplicationBody,
+} from './application.schema.js';
 import { AuditLogger } from '../../common/audit.js';
 import { logger } from '../../common/logger.js';
 import {
@@ -54,7 +58,10 @@ export class ApplicationService {
 
     // Validate against workflow determinants
     const determinants = this.getDeterminants(service.code);
-    const evalResult = WorkflowEngine.evaluate(determinants, body.formData as Record<string, unknown>);
+    const evalResult = WorkflowEngine.evaluate(
+      determinants,
+      body.formData as Record<string, unknown>,
+    );
     if (!evalResult.valid) {
       throw AppError.unprocessable('Application data does not meet service requirements', {
         violations: evalResult.violations,
@@ -65,7 +72,9 @@ export class ApplicationService {
     if (service.code === 'et-business-registration-plc') {
       const formData = body.formData as Record<string, unknown>;
       const entityType = formData['entity_type'] as string | undefined;
-      const shareholders = formData['shareholders'] as Array<{ share_percentage: number }> | undefined;
+      const shareholders = formData['shareholders'] as
+        | Array<{ share_percentage: number }>
+        | undefined;
       if (entityType && Array.isArray(shareholders)) {
         const countCheck = validateShareholderCount(entityType, shareholders.length);
         if (!countCheck.valid) {
@@ -85,7 +94,10 @@ export class ApplicationService {
     }
 
     // Calculate fees
-    const calculatedFees = this.calculateFees(service.fees, body.formData as Record<string, unknown>);
+    const calculatedFees = this.calculateFees(
+      service.fees,
+      body.formData as Record<string, unknown>,
+    );
 
     // Enhanced fee calculation for manufacturing permits
     if (service.code === 'et-manufacturing-permit') {
@@ -157,7 +169,13 @@ export class ApplicationService {
   }
 
   private calculateFees(
-    fees: Array<{ feeCode: string; feeType: string; amountEtb: unknown; formula: string | null; nameEn: string }>,
+    fees: Array<{
+      feeCode: string;
+      feeType: string;
+      amountEtb: unknown;
+      formula: string | null;
+      nameEn: string;
+    }>,
     formData: Record<string, unknown>,
   ): Record<string, { nameEn: string; amountEtb: number }> {
     const result: Record<string, { nameEn: string; amountEtb: number }> = {};
@@ -195,7 +213,6 @@ export class ApplicationService {
         return null;
       }
 
-      // eslint-disable-next-line no-new-func
       return Number(new Function(`return ${resolved}`)());
     } catch {
       return null;
@@ -243,8 +260,13 @@ export class ApplicationService {
         applicant: { select: { id: true, fullName: true, fullNameAm: true } },
         documents: {
           select: {
-            id: true, documentType: true, originalName: true, mimeType: true,
-            sizeBytes: true, verifiedAt: true, createdAt: true,
+            id: true,
+            documentType: true,
+            originalName: true,
+            mimeType: true,
+            sizeBytes: true,
+            verifiedAt: true,
+            createdAt: true,
           },
         },
         statusHistory: { orderBy: { createdAt: 'asc' } },
@@ -252,7 +274,9 @@ export class ApplicationService {
           where: { status: { not: 'COMPLETED' } },
           select: { id: true, workflowStep: true, assignedRole: true, status: true, dueAt: true },
         },
-        payments: { select: { id: true, feeId: true, amountEtb: true, status: true, paidAt: true } },
+        payments: {
+          select: { id: true, feeId: true, amountEtb: true, status: true, paidAt: true },
+        },
       },
     });
 

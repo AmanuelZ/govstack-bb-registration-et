@@ -31,7 +31,9 @@ export class DigitalRegistriesBBClient {
     if (this.isMock) {
       return this.mockCreate(request);
     }
-    throw new Error('Real Digital Registries BB integration not configured. Set REGISTRIES_BB_URL.');
+    throw new Error(
+      'Real Digital Registries BB integration not configured. Set REGISTRIES_BB_URL.',
+    );
   }
 
   /**
@@ -65,7 +67,10 @@ export class DigitalRegistriesBBClient {
       version: 1,
     };
     this.mockStore.set(id, record);
-    logger.info({ id, registryType: request.registryType }, '[MOCK] Digital Registries BB: record created');
+    logger.info(
+      { id, registryType: request.registryType },
+      '[MOCK] Digital Registries BB: record created',
+    );
     return record;
   }
 

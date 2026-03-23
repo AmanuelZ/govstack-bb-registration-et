@@ -96,9 +96,7 @@ export function errorHandler(
   request: FastifyRequest,
   reply: FastifyReply,
 ): void {
-  const correlationId =
-    (request.headers['x-correlation-id'] as string | undefined) ??
-    randomUUID();
+  const correlationId = (request.headers['x-correlation-id'] as string | undefined) ?? randomUUID();
 
   const timestamp = new Date().toISOString();
 

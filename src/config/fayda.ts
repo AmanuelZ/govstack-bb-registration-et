@@ -23,10 +23,7 @@ export const faydaConfig = {
    * ACR (Authentication Context Reference) values.
    * Ordered by preference — eSignet will attempt highest-available.
    */
-  acrValues: [
-    'mosip:idp:acr:generated-code',
-    'mosip:idp:acr:biometrics',
-  ] as const,
+  acrValues: ['mosip:idp:acr:generated-code', 'mosip:idp:acr:biometrics'] as const,
 
   /**
    * Claims requested via OIDC claims parameter.

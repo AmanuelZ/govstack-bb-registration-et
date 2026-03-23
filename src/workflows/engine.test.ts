@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { WorkflowEngine } from './engine.js';
-import { businessRegistrationDeterminants, validateShareholderCount, validateSharePercentages } from './business-registration.js';
+import {
+  businessRegistrationDeterminants,
+  validateShareholderCount,
+  validateSharePercentages,
+} from './business-registration.js';
 import { calculateRenewalFee, shouldCancelLicense } from './trade-license-renewal.js';
 import { calculateManufacturingPermitFee } from './manufacturing-permit.js';
 
@@ -86,18 +90,12 @@ describe('validateShareholderCount', () => {
 
 describe('validateSharePercentages', () => {
   it('accepts shareholders summing to 100%', () => {
-    const r = validateSharePercentages([
-      { share_percentage: 60 },
-      { share_percentage: 40 },
-    ]);
+    const r = validateSharePercentages([{ share_percentage: 60 }, { share_percentage: 40 }]);
     expect(r.valid).toBe(true);
   });
 
   it('rejects shareholders summing to less than 100%', () => {
-    const r = validateSharePercentages([
-      { share_percentage: 60 },
-      { share_percentage: 30 },
-    ]);
+    const r = validateSharePercentages([{ share_percentage: 60 }, { share_percentage: 30 }]);
     expect(r.valid).toBe(false);
   });
 });

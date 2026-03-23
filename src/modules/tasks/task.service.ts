@@ -30,7 +30,11 @@ export class TaskService {
         orderBy: [{ priority: 'desc' }, { createdAt: 'asc' }],
         include: {
           application: {
-            select: { fileId: true, status: true, service: { select: { nameEn: true, code: true } } },
+            select: {
+              fileId: true,
+              status: true,
+              service: { select: { nameEn: true, code: true } },
+            },
           },
         },
       }),
@@ -48,7 +52,13 @@ export class TaskService {
           include: {
             service: true,
             documents: {
-              select: { id: true, documentType: true, originalName: true, mimeType: true, verifiedAt: true },
+              select: {
+                id: true,
+                documentType: true,
+                originalName: true,
+                mimeType: true,
+                verifiedAt: true,
+              },
             },
           },
         },
@@ -62,7 +72,12 @@ export class TaskService {
     return task;
   }
 
-  async complete(taskId: string, operatorId: string, body: CompleteTaskBody, correlationId: string) {
+  async complete(
+    taskId: string,
+    operatorId: string,
+    body: CompleteTaskBody,
+    correlationId: string,
+  ) {
     const task = await this.prisma.task.findUnique({
       where: { id: taskId },
       include: {
@@ -110,7 +125,9 @@ export class TaskService {
           completedById: operatorId,
           action: body.action,
           ...(body.comment !== undefined && { comment: body.comment }),
-          ...(body.formVariables !== undefined && { formVariables: body.formVariables as Prisma.InputJsonValue }),
+          ...(body.formVariables !== undefined && {
+            formVariables: body.formVariables as Prisma.InputJsonValue,
+          }),
         },
       });
 
@@ -149,7 +166,11 @@ export class TaskService {
           newStatus = 'REJECTED';
           // Cancel all other open tasks
           await tx.task.updateMany({
-            where: { applicationId: application.id, status: { not: 'COMPLETED' }, id: { not: taskId } },
+            where: {
+              applicationId: application.id,
+              status: { not: 'COMPLETED' },
+              id: { not: taskId },
+            },
             data: { status: 'REASSIGNED' },
           });
           break;

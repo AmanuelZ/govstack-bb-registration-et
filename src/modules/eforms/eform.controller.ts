@@ -5,7 +5,10 @@ import { getPrismaClient } from '../../config/database.js';
 
 const getEFormService = () => new EFormService(getPrismaClient());
 
-export async function listServiceEForms(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+export async function listServiceEForms(
+  request: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const { serviceId } = ServiceEFormsParamsSchema.parse(request.params);
   const eForms = await getEFormService().listForService(serviceId);
   void reply.send(eForms);

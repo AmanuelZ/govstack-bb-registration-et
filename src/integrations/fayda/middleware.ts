@@ -1,5 +1,5 @@
 import { createSigner, createVerifier } from 'fast-jwt';
-import type { FastifyRequest, FastifyReply, FastifyPluginAsync } from 'fastify';
+import type { FastifyReply, FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { config } from '../../config/index.js';
 import { AppError } from '../../common/errors.js';
@@ -15,7 +15,10 @@ let signerInstance: SignerFn | undefined;
 
 function getSigner(): SignerFn {
   if (!signerInstance) {
-    signerInstance = createSigner({ key: config.jwtSecret, expiresIn: config.jwtExpiry }) as SignerFn;
+    signerInstance = createSigner({
+      key: config.jwtSecret,
+      expiresIn: config.jwtExpiry,
+    }) as SignerFn;
   }
   return signerInstance;
 }

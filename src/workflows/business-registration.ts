@@ -50,7 +50,8 @@ export const businessRegistrationDeterminants: Determinant[] = [
       type: 'set_minimum',
       target: 'registered_capital',
       params: { minimum: 50000 },
-      message: 'Share Company requires minimum registered capital of ETB 50,000 (Commercial Code Art. 295)',
+      message:
+        'Share Company requires minimum registered capital of ETB 50,000 (Commercial Code Art. 295)',
     },
   },
   {
@@ -105,7 +106,8 @@ export const businessRegistrationDeterminants: Determinant[] = [
       type: 'add_fee',
       target: 'high-capital-surcharge',
       params: { amount: 2000 },
-      message: 'Registrations with capital exceeding ETB 1,000,000 incur an additional processing fee of ETB 2,000',
+      message:
+        'Registrations with capital exceeding ETB 1,000,000 incur an additional processing fee of ETB 2,000',
     },
   },
 
@@ -119,7 +121,8 @@ export const businessRegistrationDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'INVESTMENT_PERMIT',
-      message: 'Companies with foreign shareholders must provide an Ethiopian Investment Commission investment permit',
+      message:
+        'Companies with foreign shareholders must provide an Ethiopian Investment Commission investment permit',
     },
   },
   {
@@ -145,7 +148,8 @@ export const businessRegistrationDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'NBE_LICENSE',
-      message: 'Financial services businesses require a license from the National Bank of Ethiopia (NBE)',
+      message:
+        'Financial services businesses require a license from the National Bank of Ethiopia (NBE)',
     },
   },
   {
@@ -157,7 +161,8 @@ export const businessRegistrationDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'MIB_LICENSE',
-      message: 'Media businesses require a license from the Ministry of Information and Communication Technology',
+      message:
+        'Media businesses require a license from the Ministry of Information and Communication Technology',
     },
   },
 
@@ -171,7 +176,8 @@ export const businessRegistrationDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'AACBE_CLEARANCE',
-      message: 'Businesses registering in Addis Ababa require clearance from the Addis Ababa City Business and Economy Bureau',
+      message:
+        'Businesses registering in Addis Ababa require clearance from the Addis Ababa City Business and Economy Bureau',
     },
   },
 ];
@@ -217,9 +223,10 @@ export function validateShareholderCount(
 /**
  * Validate total shareholder percentages sum to exactly 100%.
  */
-export function validateSharePercentages(
-  shareholders: Array<{ share_percentage: number }>,
-): { valid: boolean; message?: string } {
+export function validateSharePercentages(shareholders: Array<{ share_percentage: number }>): {
+  valid: boolean;
+  message?: string;
+} {
   const total = shareholders.reduce((sum, s) => sum + (s.share_percentage ?? 0), 0);
   // Allow ±0.01% floating point tolerance
   if (Math.abs(total - 100) > 0.01) {

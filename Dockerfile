@@ -60,11 +60,11 @@ ENV NODE_ENV=production
 
 # Only production deps
 COPY package*.json ./
+COPY prisma ./prisma/
 RUN npm ci --frozen-lockfile --omit=dev
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
-COPY prisma ./prisma/
 
 RUN addgroup -S govstack && adduser -S govstack -G govstack
 RUN mkdir -p uploads && chown govstack:govstack uploads

@@ -175,7 +175,9 @@ describe('calculateManufacturingPermitFee', () => {
   it('total equals sum of component fees', () => {
     for (const category of ['A', 'B', 'C'] as const) {
       const result = calculateManufacturingPermitFee(category);
-      expect(result.total).toBe(result.applicationFee + result.inspectionFee + result.esiaReviewFee);
+      expect(result.total).toBe(
+        result.applicationFee + result.inspectionFee + result.esiaReviewFee,
+      );
     }
   });
 

@@ -35,7 +35,9 @@ const configSchema = z.object({
   jwtExpiry: z.string().default('8h'),
 
   // Information Mediator
-  imValidateClients: z.preprocess((v) => v === true || v === 'true' || v === '1', z.boolean()).default(false),
+  imValidateClients: z
+    .preprocess((v) => v === true || v === 'true' || v === '1', z.boolean())
+    .default(false),
   imRegisteredClients: z.string().default(''),
 
   // File storage
@@ -46,8 +48,12 @@ const configSchema = z.object({
   encryptionKey: z.string().min(64).optional(), // 32 bytes hex = 64 chars
 
   // Development flags
-  mockFaydaEnabled: z.preprocess((v) => v === true || v === 'true' || v === '1', z.boolean()).default(false),
-  seedTestData: z.preprocess((v) => v === true || v === 'true' || v === '1', z.boolean()).default(false),
+  mockFaydaEnabled: z
+    .preprocess((v) => v === true || v === 'true' || v === '1', z.boolean())
+    .default(false),
+  seedTestData: z
+    .preprocess((v) => v === true || v === 'true' || v === '1', z.boolean())
+    .default(false),
 });
 
 type Config = z.infer<typeof configSchema>;
@@ -77,9 +83,7 @@ function loadConfig(): Config {
   });
 
   if (!result.success) {
-    const issues = result.error.issues
-      .map((i) => `  ${i.path.join('.')}: ${i.message}`)
-      .join('\n');
+    const issues = result.error.issues.map((i) => `  ${i.path.join('.')}: ${i.message}`).join('\n');
     throw new Error(`Configuration validation failed:\n${issues}`);
   }
 

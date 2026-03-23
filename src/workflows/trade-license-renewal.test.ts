@@ -31,7 +31,9 @@ describe('tradeLicenseRenewalDeterminants', () => {
       business_address_changed: true,
       // new_address intentionally omitted
     });
-    const hasViolation = result.violations.some((v) => v.determinantId === 'address-change-requires-field');
+    const hasViolation = result.violations.some(
+      (v) => v.determinantId === 'address-change-requires-field',
+    );
     expect(hasViolation).toBe(true);
   });
 
@@ -40,7 +42,9 @@ describe('tradeLicenseRenewalDeterminants', () => {
       business_address_changed: true,
       new_address: 'Bole Road, Addis Ababa',
     });
-    const hasViolation = result.violations.some((v) => v.determinantId === 'address-change-requires-field');
+    const hasViolation = result.violations.some(
+      (v) => v.determinantId === 'address-change-requires-field',
+    );
     expect(hasViolation).toBe(false);
   });
 

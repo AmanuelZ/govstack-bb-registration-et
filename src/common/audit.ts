@@ -43,8 +43,12 @@ export class AuditLogger {
           action: entry.action,
           resourceType: entry.resourceType,
           resourceId: entry.resourceId,
-          ...(entry.oldValue !== undefined && { oldValue: entry.oldValue as Prisma.InputJsonValue }),
-          ...(entry.newValue !== undefined && { newValue: entry.newValue as Prisma.InputJsonValue }),
+          ...(entry.oldValue !== undefined && {
+            oldValue: entry.oldValue as Prisma.InputJsonValue,
+          }),
+          ...(entry.newValue !== undefined && {
+            newValue: entry.newValue as Prisma.InputJsonValue,
+          }),
           ...(entry.ipAddress !== undefined && { ipAddress: entry.ipAddress }),
           correlationId: entry.correlationId,
         },

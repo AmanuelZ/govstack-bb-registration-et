@@ -13,58 +13,340 @@ const prisma = new PrismaClient({
 
 const esicCodes = [
   // Section A: Agriculture, Forestry and Fishing
-  { code: 'A01', sectionCode: 'A', sectionEn: 'Agriculture, Forestry and Fishing', sectionAm: 'ግብርና፣ ደን እና አሳ ማጥመድ', divisionEn: 'Crop and animal production, hunting and related service activities', divisionAm: 'የሰብል እና እንስሳት ምርት፣ አደን እና ተዛማጅ አገልግሎቶች' },
-  { code: 'A02', sectionCode: 'A', sectionEn: 'Agriculture, Forestry and Fishing', sectionAm: 'ግብርና፣ ደን እና አሳ ማጥመድ', divisionEn: 'Forestry and logging', divisionAm: 'ደን እና ቁሪ መቁረጥ' },
-  { code: 'A03', sectionCode: 'A', sectionEn: 'Agriculture, Forestry and Fishing', sectionAm: 'ግብርና፣ ደን እና አሳ ማጥመድ', divisionEn: 'Fishing and aquaculture', divisionAm: 'አሳ ማጥመድ እና የውሃ ሀብት ልማት' },
+  {
+    code: 'A01',
+    sectionCode: 'A',
+    sectionEn: 'Agriculture, Forestry and Fishing',
+    sectionAm: 'ግብርና፣ ደን እና አሳ ማጥመድ',
+    divisionEn: 'Crop and animal production, hunting and related service activities',
+    divisionAm: 'የሰብል እና እንስሳት ምርት፣ አደን እና ተዛማጅ አገልግሎቶች',
+  },
+  {
+    code: 'A02',
+    sectionCode: 'A',
+    sectionEn: 'Agriculture, Forestry and Fishing',
+    sectionAm: 'ግብርና፣ ደን እና አሳ ማጥመድ',
+    divisionEn: 'Forestry and logging',
+    divisionAm: 'ደን እና ቁሪ መቁረጥ',
+  },
+  {
+    code: 'A03',
+    sectionCode: 'A',
+    sectionEn: 'Agriculture, Forestry and Fishing',
+    sectionAm: 'ግብርና፣ ደን እና አሳ ማጥመድ',
+    divisionEn: 'Fishing and aquaculture',
+    divisionAm: 'አሳ ማጥመድ እና የውሃ ሀብት ልማት',
+  },
 
   // Section C: Manufacturing
-  { code: 'C10', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of food products', divisionAm: 'የምግብ ምርቶች ማምረት', groupEn: 'Processing and preserving of meat and production of meat products', groupAm: 'ሥጋ ማቀነባበርና ማስቀመጥ' },
-  { code: 'C11', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of beverages', divisionAm: 'መጠጦችን ማምረት' },
-  { code: 'C12', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of tobacco products', divisionAm: 'የትምባሆ ምርቶች ማምረት' },
-  { code: 'C13', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of textiles', divisionAm: 'ጨርቃ ጨርቅ ማምረት' },
-  { code: 'C14', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of wearing apparel', divisionAm: 'ልብስ ማምረት' },
-  { code: 'C15', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of leather and related products', divisionAm: 'ቆዳ እና ተዛማጅ ምርቶች ማምረት' },
-  { code: 'C16', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of wood and wood products', divisionAm: 'እንጨትና የእንጨት ምርቶች ማምረት' },
-  { code: 'C17', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of paper and paper products', divisionAm: 'ወረቀትና የወረቀት ምርቶች ማምረት' },
-  { code: 'C20', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of chemicals and chemical products', divisionAm: 'ኬሚካልና ኬሚካል ምርቶች ማምረት' },
-  { code: 'C21', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of basic pharmaceutical products', divisionAm: 'መሠረታዊ የፋርማሲ ምርቶች ማምረት' },
-  { code: 'C22', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of rubber and plastics products', divisionAm: 'ላስቲክ እና ፕላስቲክ ምርቶች ማምረት' },
-  { code: 'C24', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of basic metals', divisionAm: 'መሠረታዊ ብረቶች ማምረት' },
-  { code: 'C25', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of fabricated metal products', divisionAm: 'የተቀነባበሩ የብረት ምርቶች ማምረት' },
-  { code: 'C26', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of computer, electronic and optical products', divisionAm: 'ኮምፒውተር፣ ኤሌክትሮኒክ እና ኦፕቲካል ምርቶች ማምረት' },
-  { code: 'C27', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of electrical equipment', divisionAm: 'የኤሌክትሪክ መሣሪያዎች ማምረት' },
-  { code: 'C28', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of machinery and equipment', divisionAm: 'ማሽኖችና መሣሪያዎች ማምረት' },
-  { code: 'C29', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Manufacture of motor vehicles', divisionAm: 'ሞተር ተሽከርካሪዎች ማምረት' },
-  { code: 'C33', sectionCode: 'C', sectionEn: 'Manufacturing', sectionAm: 'ማምረቻ', divisionEn: 'Repair and installation of machinery and equipment', divisionAm: 'ማሽኖችና መሣሪያዎች ጥገናና ማስቀመጥ' },
+  {
+    code: 'C10',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of food products',
+    divisionAm: 'የምግብ ምርቶች ማምረት',
+    groupEn: 'Processing and preserving of meat and production of meat products',
+    groupAm: 'ሥጋ ማቀነባበርና ማስቀመጥ',
+  },
+  {
+    code: 'C11',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of beverages',
+    divisionAm: 'መጠጦችን ማምረት',
+  },
+  {
+    code: 'C12',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of tobacco products',
+    divisionAm: 'የትምባሆ ምርቶች ማምረት',
+  },
+  {
+    code: 'C13',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of textiles',
+    divisionAm: 'ጨርቃ ጨርቅ ማምረት',
+  },
+  {
+    code: 'C14',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of wearing apparel',
+    divisionAm: 'ልብስ ማምረት',
+  },
+  {
+    code: 'C15',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of leather and related products',
+    divisionAm: 'ቆዳ እና ተዛማጅ ምርቶች ማምረት',
+  },
+  {
+    code: 'C16',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of wood and wood products',
+    divisionAm: 'እንጨትና የእንጨት ምርቶች ማምረት',
+  },
+  {
+    code: 'C17',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of paper and paper products',
+    divisionAm: 'ወረቀትና የወረቀት ምርቶች ማምረት',
+  },
+  {
+    code: 'C20',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of chemicals and chemical products',
+    divisionAm: 'ኬሚካልና ኬሚካል ምርቶች ማምረት',
+  },
+  {
+    code: 'C21',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of basic pharmaceutical products',
+    divisionAm: 'መሠረታዊ የፋርማሲ ምርቶች ማምረት',
+  },
+  {
+    code: 'C22',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of rubber and plastics products',
+    divisionAm: 'ላስቲክ እና ፕላስቲክ ምርቶች ማምረት',
+  },
+  {
+    code: 'C24',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of basic metals',
+    divisionAm: 'መሠረታዊ ብረቶች ማምረት',
+  },
+  {
+    code: 'C25',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of fabricated metal products',
+    divisionAm: 'የተቀነባበሩ የብረት ምርቶች ማምረት',
+  },
+  {
+    code: 'C26',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of computer, electronic and optical products',
+    divisionAm: 'ኮምፒውተር፣ ኤሌክትሮኒክ እና ኦፕቲካል ምርቶች ማምረት',
+  },
+  {
+    code: 'C27',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of electrical equipment',
+    divisionAm: 'የኤሌክትሪክ መሣሪያዎች ማምረት',
+  },
+  {
+    code: 'C28',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of machinery and equipment',
+    divisionAm: 'ማሽኖችና መሣሪያዎች ማምረት',
+  },
+  {
+    code: 'C29',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Manufacture of motor vehicles',
+    divisionAm: 'ሞተር ተሽከርካሪዎች ማምረት',
+  },
+  {
+    code: 'C33',
+    sectionCode: 'C',
+    sectionEn: 'Manufacturing',
+    sectionAm: 'ማምረቻ',
+    divisionEn: 'Repair and installation of machinery and equipment',
+    divisionAm: 'ማሽኖችና መሣሪያዎች ጥገናና ማስቀመጥ',
+  },
 
   // Section F: Construction
-  { code: 'F41', sectionCode: 'F', sectionEn: 'Construction', sectionAm: 'ግንባታ', divisionEn: 'Construction of buildings', divisionAm: 'ሕንጻዎች ግንባታ' },
-  { code: 'F42', sectionCode: 'F', sectionEn: 'Construction', sectionAm: 'ግንባታ', divisionEn: 'Civil engineering', divisionAm: 'ሲቪል ምህንድስና' },
-  { code: 'F43', sectionCode: 'F', sectionEn: 'Construction', sectionAm: 'ግንባታ', divisionEn: 'Specialised construction activities', divisionAm: 'ልዩ ልዩ የግንባታ ሥራዎች' },
+  {
+    code: 'F41',
+    sectionCode: 'F',
+    sectionEn: 'Construction',
+    sectionAm: 'ግንባታ',
+    divisionEn: 'Construction of buildings',
+    divisionAm: 'ሕንጻዎች ግንባታ',
+  },
+  {
+    code: 'F42',
+    sectionCode: 'F',
+    sectionEn: 'Construction',
+    sectionAm: 'ግንባታ',
+    divisionEn: 'Civil engineering',
+    divisionAm: 'ሲቪል ምህንድስና',
+  },
+  {
+    code: 'F43',
+    sectionCode: 'F',
+    sectionEn: 'Construction',
+    sectionAm: 'ግንባታ',
+    divisionEn: 'Specialised construction activities',
+    divisionAm: 'ልዩ ልዩ የግንባታ ሥራዎች',
+  },
 
   // Section G: Wholesale and Retail Trade
-  { code: 'G45', sectionCode: 'G', sectionEn: 'Wholesale and Retail Trade', sectionAm: 'ጅምላ እና ችርቻሮ ንግድ', divisionEn: 'Wholesale and retail trade and repair of motor vehicles', divisionAm: 'ሞተር ተሽከርካሪዎች ጅምላ፣ ችርቻሮ ንግድ እና ጥገና' },
-  { code: 'G46', sectionCode: 'G', sectionEn: 'Wholesale and Retail Trade', sectionAm: 'ጅምላ እና ችርቻሮ ንግድ', divisionEn: 'Wholesale trade, except of motor vehicles', divisionAm: 'ጅምላ ንግድ (ሞተር ተሽከርካሪዎች ሳይሆን)' },
-  { code: 'G47', sectionCode: 'G', sectionEn: 'Wholesale and Retail Trade', sectionAm: 'ጅምላ እና ችርቻሮ ንግድ', divisionEn: 'Retail trade, except of motor vehicles', divisionAm: 'ችርቻሮ ንግድ (ሞተር ተሽከርካሪዎች ሳይሆን)' },
+  {
+    code: 'G45',
+    sectionCode: 'G',
+    sectionEn: 'Wholesale and Retail Trade',
+    sectionAm: 'ጅምላ እና ችርቻሮ ንግድ',
+    divisionEn: 'Wholesale and retail trade and repair of motor vehicles',
+    divisionAm: 'ሞተር ተሽከርካሪዎች ጅምላ፣ ችርቻሮ ንግድ እና ጥገና',
+  },
+  {
+    code: 'G46',
+    sectionCode: 'G',
+    sectionEn: 'Wholesale and Retail Trade',
+    sectionAm: 'ጅምላ እና ችርቻሮ ንግድ',
+    divisionEn: 'Wholesale trade, except of motor vehicles',
+    divisionAm: 'ጅምላ ንግድ (ሞተር ተሽከርካሪዎች ሳይሆን)',
+  },
+  {
+    code: 'G47',
+    sectionCode: 'G',
+    sectionEn: 'Wholesale and Retail Trade',
+    sectionAm: 'ጅምላ እና ችርቻሮ ንግድ',
+    divisionEn: 'Retail trade, except of motor vehicles',
+    divisionAm: 'ችርቻሮ ንግድ (ሞተር ተሽከርካሪዎች ሳይሆን)',
+  },
 
   // Section H: Transportation and Storage
-  { code: 'H49', sectionCode: 'H', sectionEn: 'Transportation and Storage', sectionAm: 'ትራንስፖርት እና ማከማቻ', divisionEn: 'Land transport and transport via pipelines', divisionAm: 'የምድር ትራንስፖርት እና በቧንቧ ማጓጓዝ' },
-  { code: 'H50', sectionCode: 'H', sectionEn: 'Transportation and Storage', sectionAm: 'ትራንስፖርት እና ማከማቻ', divisionEn: 'Water transport', divisionAm: 'የውሃ ትራንስፖርት' },
-  { code: 'H51', sectionCode: 'H', sectionEn: 'Transportation and Storage', sectionAm: 'ትራንስፖርት እና ማከማቻ', divisionEn: 'Air transport', divisionAm: 'የአየር ትራንስፖርት' },
-  { code: 'H52', sectionCode: 'H', sectionEn: 'Transportation and Storage', sectionAm: 'ትራንስፖርት እና ማከማቻ', divisionEn: 'Warehousing and support activities for transportation', divisionAm: 'ጎጆ ማስቀመጥ እና ለትራንስፖርት ድጋፍ ሥራዎች' },
-  { code: 'H53', sectionCode: 'H', sectionEn: 'Transportation and Storage', sectionAm: 'ትራንስፖርት እና ማከማቻ', divisionEn: 'Postal and courier activities', divisionAm: 'ፖስታ እና ኩሪየር አገልግሎቶች' },
+  {
+    code: 'H49',
+    sectionCode: 'H',
+    sectionEn: 'Transportation and Storage',
+    sectionAm: 'ትራንስፖርት እና ማከማቻ',
+    divisionEn: 'Land transport and transport via pipelines',
+    divisionAm: 'የምድር ትራንስፖርት እና በቧንቧ ማጓጓዝ',
+  },
+  {
+    code: 'H50',
+    sectionCode: 'H',
+    sectionEn: 'Transportation and Storage',
+    sectionAm: 'ትራንስፖርት እና ማከማቻ',
+    divisionEn: 'Water transport',
+    divisionAm: 'የውሃ ትራንስፖርት',
+  },
+  {
+    code: 'H51',
+    sectionCode: 'H',
+    sectionEn: 'Transportation and Storage',
+    sectionAm: 'ትራንስፖርት እና ማከማቻ',
+    divisionEn: 'Air transport',
+    divisionAm: 'የአየር ትራንስፖርት',
+  },
+  {
+    code: 'H52',
+    sectionCode: 'H',
+    sectionEn: 'Transportation and Storage',
+    sectionAm: 'ትራንስፖርት እና ማከማቻ',
+    divisionEn: 'Warehousing and support activities for transportation',
+    divisionAm: 'ጎጆ ማስቀመጥ እና ለትራንስፖርት ድጋፍ ሥራዎች',
+  },
+  {
+    code: 'H53',
+    sectionCode: 'H',
+    sectionEn: 'Transportation and Storage',
+    sectionAm: 'ትራንስፖርት እና ማከማቻ',
+    divisionEn: 'Postal and courier activities',
+    divisionAm: 'ፖስታ እና ኩሪየር አገልግሎቶች',
+  },
 
   // Section I: Accommodation and Food Service
-  { code: 'I55', sectionCode: 'I', sectionEn: 'Accommodation and Food Service Activities', sectionAm: '숙박 እና ምግብ አገልግሎት', divisionEn: 'Accommodation', divisionAm: 'ማረፊያ አገልግሎት' },
-  { code: 'I56', sectionCode: 'I', sectionEn: 'Accommodation and Food Service Activities', sectionAm: '숙박 እና ምግብ አገልግሎት', divisionEn: 'Food and beverage service activities', divisionAm: 'ምግብ እና መጠጥ አገልግሎት' },
+  {
+    code: 'I55',
+    sectionCode: 'I',
+    sectionEn: 'Accommodation and Food Service Activities',
+    sectionAm: '숙박 እና ምግብ አገልግሎት',
+    divisionEn: 'Accommodation',
+    divisionAm: 'ማረፊያ አገልግሎት',
+  },
+  {
+    code: 'I56',
+    sectionCode: 'I',
+    sectionEn: 'Accommodation and Food Service Activities',
+    sectionAm: '숙박 እና ምግብ አገልግሎት',
+    divisionEn: 'Food and beverage service activities',
+    divisionAm: 'ምግብ እና መጠጥ አገልግሎት',
+  },
 
   // Section J: Information and Communication
-  { code: 'J58', sectionCode: 'J', sectionEn: 'Information and Communication', sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን', divisionEn: 'Publishing activities', divisionAm: 'የህትመት አገልግሎቶች' },
-  { code: 'J59', sectionCode: 'J', sectionEn: 'Information and Communication', sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን', divisionEn: 'Motion picture, video and television programme production', divisionAm: 'ፊልም፣ ቪዲዮ እና ቴሌቪዥን ፕሮግራም ምርት' },
-  { code: 'J60', sectionCode: 'J', sectionEn: 'Information and Communication', sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን', divisionEn: 'Programming and broadcasting activities', divisionAm: 'ፕሮግራሚንግ እና ስርጭት አገልግሎቶች' },
-  { code: 'J61', sectionCode: 'J', sectionEn: 'Information and Communication', sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን', divisionEn: 'Telecommunications', divisionAm: 'ቴሌኮሙኒኬሽን' },
-  { code: 'J62', sectionCode: 'J', sectionEn: 'Information and Communication', sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን', divisionEn: 'Computer programming, consultancy and related activities', divisionAm: 'የኮምፒዩተር ፕሮግራሚንግ፣ ምክር አሰጣጥ እና ተዛማጅ አገልግሎቶች' },
-  { code: 'J63', sectionCode: 'J', sectionEn: 'Information and Communication', sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን', divisionEn: 'Information service activities', divisionAm: 'የኢንፎርሜሽን አገልግሎቶች' },
+  {
+    code: 'J58',
+    sectionCode: 'J',
+    sectionEn: 'Information and Communication',
+    sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን',
+    divisionEn: 'Publishing activities',
+    divisionAm: 'የህትመት አገልግሎቶች',
+  },
+  {
+    code: 'J59',
+    sectionCode: 'J',
+    sectionEn: 'Information and Communication',
+    sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን',
+    divisionEn: 'Motion picture, video and television programme production',
+    divisionAm: 'ፊልም፣ ቪዲዮ እና ቴሌቪዥን ፕሮግራም ምርት',
+  },
+  {
+    code: 'J60',
+    sectionCode: 'J',
+    sectionEn: 'Information and Communication',
+    sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን',
+    divisionEn: 'Programming and broadcasting activities',
+    divisionAm: 'ፕሮግራሚንግ እና ስርጭት አገልግሎቶች',
+  },
+  {
+    code: 'J61',
+    sectionCode: 'J',
+    sectionEn: 'Information and Communication',
+    sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን',
+    divisionEn: 'Telecommunications',
+    divisionAm: 'ቴሌኮሙኒኬሽን',
+  },
+  {
+    code: 'J62',
+    sectionCode: 'J',
+    sectionEn: 'Information and Communication',
+    sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን',
+    divisionEn: 'Computer programming, consultancy and related activities',
+    divisionAm: 'የኮምፒዩተር ፕሮግራሚንግ፣ ምክር አሰጣጥ እና ተዛማጅ አገልግሎቶች',
+  },
+  {
+    code: 'J63',
+    sectionCode: 'J',
+    sectionEn: 'Information and Communication',
+    sectionAm: 'ኢንፎርሜሽን እና ኮምዩኒኬሽን',
+    divisionEn: 'Information service activities',
+    divisionAm: 'የኢንፎርሜሽን አገልግሎቶች',
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -155,7 +437,12 @@ async function main() {
       fullNameAm: 'ዮናስ ግርማ ታደሰ',
       email: 'yonas.girma@moti.gov.et',
       phoneNumber: '+251944567890',
-      roles: ['applicant', 'operator:registration-officer', 'operator:license-officer', 'operator:permit-authority'],
+      roles: [
+        'applicant',
+        'operator:registration-officer',
+        'operator:license-officer',
+        'operator:permit-authority',
+      ],
     },
   });
 
@@ -169,7 +456,12 @@ async function main() {
       fullNameAm: 'ትግስት ሙሉጌታ በላይ',
       email: 'tigist.mulugeta@moenr.gov.et',
       phoneNumber: '+251955678901',
-      roles: ['applicant', 'operator:compliance-checker', 'operator:technical-assessor', 'operator:environmental-officer'],
+      roles: [
+        'applicant',
+        'operator:compliance-checker',
+        'operator:technical-assessor',
+        'operator:environmental-officer',
+      ],
     },
   });
 
@@ -187,8 +479,10 @@ async function main() {
       code: 'et-business-registration-plc',
       nameEn: 'Business Registration (Private Limited Company)',
       nameAm: 'የንግድ ምዝገባ (ግል ሀላፊነቱ የተወሰነ የኅብረት ሥራ ማኅበር)',
-      descriptionEn: 'Register a new Private Limited Company (PLC) with the Ministry of Trade and Industry. Includes name reservation, memorandum of association, and certificate of incorporation.',
-      descriptionAm: 'አዲስ ግል ሃላፊነቱ የተወሰነ ማህበር (ፒኤልሲ) ከንግድና ኢንዱስትሪ ሚኒስቴር ጋር ይመዝገቡ። የስም ቦታ ማስያዝ፣ የመመስረቻ ሰነድ እና የምዝገባ ምስክርነት ያካትታል።',
+      descriptionEn:
+        'Register a new Private Limited Company (PLC) with the Ministry of Trade and Industry. Includes name reservation, memorandum of association, and certificate of incorporation.',
+      descriptionAm:
+        'አዲስ ግል ሃላፊነቱ የተወሰነ ማህበር (ፒኤልሲ) ከንግድና ኢንዱስትሪ ሚኒስቴር ጋር ይመዝገቡ። የስም ቦታ ማስያዝ፣ የመመስረቻ ሰነድ እና የምዝገባ ምስክርነት ያካትታል።',
       ministryEn: 'Ministry of Trade and Industry',
       ministryAm: 'የንግድ እና ኢንዱስትሪ ሚኒስቴር',
       estimatedDays: 5,
@@ -199,10 +493,50 @@ async function main() {
 
   // Workflow Steps for PLC
   const plcSteps = [
-    { stepCode: 'name-review', stepOrder: 1, nameEn: 'Company Name Review', nameAm: 'የኩባንያ ስም ግምገማ', assignedRole: 'operator:name-reviewer', slaHours: 24, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'], nextStepCode: 'document-verification' },
-    { stepCode: 'document-verification', stepOrder: 2, nameEn: 'Document Verification', nameAm: 'ሰነድ ማረጋገጥ', assignedRole: 'operator:document-verifier', slaHours: 48, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'], nextStepCode: 'registration' },
-    { stepCode: 'registration', stepOrder: 3, nameEn: 'Registration Processing', nameAm: 'ምዝገባ ማስኬድ', assignedRole: 'operator:registration-officer', slaHours: 48, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'], nextStepCode: 'certificate-issuance' },
-    { stepCode: 'certificate-issuance', stepOrder: 4, nameEn: 'Certificate Issuance', nameAm: 'ምስክርነት መስጠት', assignedRole: 'operator:registration-officer', slaHours: 8, isTerminal: true, allowedActions: ['APPROVE', 'REJECT'], nextStepCode: null },
+    {
+      stepCode: 'name-review',
+      stepOrder: 1,
+      nameEn: 'Company Name Review',
+      nameAm: 'የኩባንያ ስም ግምገማ',
+      assignedRole: 'operator:name-reviewer',
+      slaHours: 24,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'],
+      nextStepCode: 'document-verification',
+    },
+    {
+      stepCode: 'document-verification',
+      stepOrder: 2,
+      nameEn: 'Document Verification',
+      nameAm: 'ሰነድ ማረጋገጥ',
+      assignedRole: 'operator:document-verifier',
+      slaHours: 48,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'],
+      nextStepCode: 'registration',
+    },
+    {
+      stepCode: 'registration',
+      stepOrder: 3,
+      nameEn: 'Registration Processing',
+      nameAm: 'ምዝገባ ማስኬድ',
+      assignedRole: 'operator:registration-officer',
+      slaHours: 48,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'],
+      nextStepCode: 'certificate-issuance',
+    },
+    {
+      stepCode: 'certificate-issuance',
+      stepOrder: 4,
+      nameEn: 'Certificate Issuance',
+      nameAm: 'ምስክርነት መስጠት',
+      assignedRole: 'operator:registration-officer',
+      slaHours: 8,
+      isTerminal: true,
+      allowedActions: ['APPROVE', 'REJECT'],
+      nextStepCode: null,
+    },
   ];
 
   for (const step of plcSteps) {
@@ -227,8 +561,22 @@ async function main() {
 
   // Fees for PLC
   const plcFees = [
-    { feeCode: 'registration-fee', nameEn: 'Registration Fee', nameAm: 'የምዝገባ ክፍያ', feeType: 'FIXED', amountEtb: 500, formula: null },
-    { feeCode: 'capital-duty', nameEn: 'Capital Duty', nameAm: 'የካፒታል ቀረጥ', feeType: 'CALCULATED', amountEtb: null, formula: 'registered_capital * 0.001' },
+    {
+      feeCode: 'registration-fee',
+      nameEn: 'Registration Fee',
+      nameAm: 'የምዝገባ ክፍያ',
+      feeType: 'FIXED',
+      amountEtb: 500,
+      formula: null,
+    },
+    {
+      feeCode: 'capital-duty',
+      nameEn: 'Capital Duty',
+      nameAm: 'የካፒታል ቀረጥ',
+      feeType: 'CALCULATED',
+      amountEtb: null,
+      formula: 'registered_capital * 0.001',
+    },
   ];
 
   for (const fee of plcFees) {
@@ -259,7 +607,16 @@ async function main() {
       titleAm: 'የንግድ ምዝገባ ማመልከቻ ቅጽ — ግል ሃላፊነቱ የተወሰነ ማህበር',
       schema: {
         type: 'object',
-        required: ['company_name_en', 'company_name_am', 'entity_type', 'business_sector', 'registered_capital', 'shareholders', 'registered_address', 'managing_director'],
+        required: [
+          'company_name_en',
+          'company_name_am',
+          'entity_type',
+          'business_sector',
+          'registered_capital',
+          'shareholders',
+          'registered_address',
+          'managing_director',
+        ],
         properties: {
           company_name_en: {
             type: 'string',
@@ -288,8 +645,22 @@ async function main() {
             titleAm: 'የድርጅት ዓይነት',
             enum: ['PLC', 'SC', 'OPPLC', 'GP', 'LP', 'LLP'],
             enumLabels: {
-              en: { PLC: 'Private Limited Company', SC: 'Share Company', OPPLC: 'One-Person PLC', GP: 'General Partnership', LP: 'Limited Partnership', LLP: 'Limited Liability Partnership' },
-              am: { PLC: 'ግል ሃላፊነቱ የተወሰነ ማህበር', SC: 'አክሲዮን ኩባንያ', OPPLC: 'አንድ ሰው ፒኤልሲ', GP: 'ጠቅላላ አጋርነት', LP: 'ውሱን አጋርነት', LLP: 'ውሱን ሃላፊነት አጋርነት' },
+              en: {
+                PLC: 'Private Limited Company',
+                SC: 'Share Company',
+                OPPLC: 'One-Person PLC',
+                GP: 'General Partnership',
+                LP: 'Limited Partnership',
+                LLP: 'Limited Liability Partnership',
+              },
+              am: {
+                PLC: 'ግል ሃላፊነቱ የተወሰነ ማህበር',
+                SC: 'አክሲዮን ኩባንያ',
+                OPPLC: 'አንድ ሰው ፒኤልሲ',
+                GP: 'ጠቅላላ አጋርነት',
+                LP: 'ውሱን አጋርነት',
+                LLP: 'ውሱን ሃላፊነት አጋርነት',
+              },
             },
           },
           business_sector: {
@@ -316,9 +687,20 @@ async function main() {
               properties: {
                 full_name: { type: 'string', title: 'Full Name', titleAm: 'ሙሉ ስም' },
                 nationality: { type: 'string', title: 'Nationality', titleAm: 'ዜግነት' },
-                id_type: { type: 'string', enum: ['FAYDA', 'PASSPORT', 'KEBELE_ID'], title: 'ID Type', titleAm: 'መታወቂያ ዓይነት' },
+                id_type: {
+                  type: 'string',
+                  enum: ['FAYDA', 'PASSPORT', 'KEBELE_ID'],
+                  title: 'ID Type',
+                  titleAm: 'መታወቂያ ዓይነት',
+                },
                 id_number: { type: 'string', title: 'ID Number', titleAm: 'መታወቂያ ቁጥር' },
-                share_percentage: { type: 'number', minimum: 1, maximum: 100, title: 'Share Percentage (%)', titleAm: 'የአክሲዮን መጠን (%)' },
+                share_percentage: {
+                  type: 'number',
+                  minimum: 1,
+                  maximum: 100,
+                  title: 'Share Percentage (%)',
+                  titleAm: 'የአክሲዮን መጠን (%)',
+                },
               },
             },
           },
@@ -332,7 +714,11 @@ async function main() {
               sub_city: { type: 'string', title: 'Sub-City / Zone', titleAm: 'ክፍለ ከተማ / ዞን' },
               woreda: { type: 'string', title: 'Woreda', titleAm: 'ወረዳ' },
               kebele: { type: 'string', title: 'Kebele', titleAm: 'ቀበሌ' },
-              house_number: { type: 'string', title: 'House / Plot Number', titleAm: 'ቤት / ፕሎት ቁጥር' },
+              house_number: {
+                type: 'string',
+                title: 'House / Plot Number',
+                titleAm: 'ቤት / ፕሎት ቁጥር',
+              },
               po_box: { type: 'string', title: 'P.O. Box', titleAm: 'ፖ.ሳ.ቁ' },
               phone: { type: 'string', title: 'Office Phone', titleAm: 'ቢሮ ስልክ' },
               email: { type: 'string', format: 'email', title: 'Office Email', titleAm: 'ቢሮ ኢሜይል' },
@@ -346,7 +732,12 @@ async function main() {
             properties: {
               full_name: { type: 'string', title: 'Full Name', titleAm: 'ሙሉ ስም' },
               nationality: { type: 'string', title: 'Nationality', titleAm: 'ዜግነት' },
-              id_type: { type: 'string', enum: ['FAYDA', 'PASSPORT', 'KEBELE_ID'], title: 'ID Type', titleAm: 'መታወቂያ ዓይነት' },
+              id_type: {
+                type: 'string',
+                enum: ['FAYDA', 'PASSPORT', 'KEBELE_ID'],
+                title: 'ID Type',
+                titleAm: 'መታወቂያ ዓይነት',
+              },
               id_number: { type: 'string', title: 'ID Number', titleAm: 'መታወቂያ ቁጥር' },
               phone: { type: 'string', title: 'Phone', titleAm: 'ስልክ' },
               email: { type: 'string', format: 'email', title: 'Email', titleAm: 'ኢሜይል' },
@@ -355,8 +746,21 @@ async function main() {
         },
       },
       uiSchema: {
-        'ui:order': ['company_name_en', 'company_name_am', 'alternative_names', 'entity_type', 'business_sector', 'registered_capital', 'shareholders', 'registered_address', 'managing_director'],
-        registered_capital: { 'ui:help': 'Minimum ETB 15,000. Capital duty will be calculated at 0.1% of registered capital.' },
+        'ui:order': [
+          'company_name_en',
+          'company_name_am',
+          'alternative_names',
+          'entity_type',
+          'business_sector',
+          'registered_capital',
+          'shareholders',
+          'registered_address',
+          'managing_director',
+        ],
+        registered_capital: {
+          'ui:help':
+            'Minimum ETB 15,000. Capital duty will be calculated at 0.1% of registered capital.',
+        },
         shareholders: { 'ui:description': 'At least 2 shareholders required for PLC formation.' },
       },
     },
@@ -371,8 +775,10 @@ async function main() {
       code: 'et-trade-license-renewal',
       nameEn: 'Trade License Renewal',
       nameAm: 'የንግድ ፈቃድ ታደሳ',
-      descriptionEn: 'Renew an existing trade license issued by the Ministry of Trade and Industry. Applicable to all commercial entities operating within Ethiopia.',
-      descriptionAm: 'ከንግድና ኢንዱስትሪ ሚኒስቴር የተሰጠ ነባር የንግድ ፈቃድ ይዩ። በኢትዮጵያ ውስጥ ለሚሰሩ ሁሉም የንግድ ድርጅቶች ይሠራል።',
+      descriptionEn:
+        'Renew an existing trade license issued by the Ministry of Trade and Industry. Applicable to all commercial entities operating within Ethiopia.',
+      descriptionAm:
+        'ከንግድና ኢንዱስትሪ ሚኒስቴር የተሰጠ ነባር የንግድ ፈቃድ ይዩ። በኢትዮጵያ ውስጥ ለሚሰሩ ሁሉም የንግድ ድርጅቶች ይሠራል።',
       ministryEn: 'Ministry of Trade and Industry',
       ministryAm: 'የንግድ እና ኢንዱስትሪ ሚኒስቴር',
       estimatedDays: 3,
@@ -382,9 +788,39 @@ async function main() {
   });
 
   const tradeSteps = [
-    { stepCode: 'compliance-check', stepOrder: 1, nameEn: 'Compliance Check', nameAm: 'የተሟላ ሁኔታ ማረጋገጥ', assignedRole: 'operator:compliance-checker', slaHours: 24, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'], nextStepCode: 'license-review' },
-    { stepCode: 'license-review', stepOrder: 2, nameEn: 'License Review', nameAm: 'ፈቃድ ግምገማ', assignedRole: 'operator:license-officer', slaHours: 24, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'], nextStepCode: 'license-issuance' },
-    { stepCode: 'license-issuance', stepOrder: 3, nameEn: 'License Issuance', nameAm: 'ፈቃድ መስጠት', assignedRole: 'operator:license-officer', slaHours: 8, isTerminal: true, allowedActions: ['APPROVE', 'REJECT'], nextStepCode: null },
+    {
+      stepCode: 'compliance-check',
+      stepOrder: 1,
+      nameEn: 'Compliance Check',
+      nameAm: 'የተሟላ ሁኔታ ማረጋገጥ',
+      assignedRole: 'operator:compliance-checker',
+      slaHours: 24,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'],
+      nextStepCode: 'license-review',
+    },
+    {
+      stepCode: 'license-review',
+      stepOrder: 2,
+      nameEn: 'License Review',
+      nameAm: 'ፈቃድ ግምገማ',
+      assignedRole: 'operator:license-officer',
+      slaHours: 24,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'],
+      nextStepCode: 'license-issuance',
+    },
+    {
+      stepCode: 'license-issuance',
+      stepOrder: 3,
+      nameEn: 'License Issuance',
+      nameAm: 'ፈቃድ መስጠት',
+      assignedRole: 'operator:license-officer',
+      slaHours: 8,
+      isTerminal: true,
+      allowedActions: ['APPROVE', 'REJECT'],
+      nextStepCode: null,
+    },
   ];
 
   for (const step of tradeSteps) {
@@ -408,9 +844,27 @@ async function main() {
   }
 
   const tradeFees = [
-    { feeCode: 'renewal-fee-grade1', nameEn: 'Renewal Fee — Grade 1 (Large Enterprise)', nameAm: 'የታደሳ ክፍያ — ደረጃ 1 (ትልቅ ድርጅት)', feeType: 'FIXED', amountEtb: 5000 },
-    { feeCode: 'renewal-fee-grade2', nameEn: 'Renewal Fee — Grade 2 (Medium Enterprise)', nameAm: 'የታደሳ ክፍያ — ደረጃ 2 (መካከለኛ ድርጅት)', feeType: 'FIXED', amountEtb: 2000 },
-    { feeCode: 'renewal-fee-grade3', nameEn: 'Renewal Fee — Grade 3 (Small Enterprise)', nameAm: 'የታደሳ ክፍያ — ደረጃ 3 (ትንሽ ድርጅት)', feeType: 'FIXED', amountEtb: 500 },
+    {
+      feeCode: 'renewal-fee-grade1',
+      nameEn: 'Renewal Fee — Grade 1 (Large Enterprise)',
+      nameAm: 'የታደሳ ክፍያ — ደረጃ 1 (ትልቅ ድርጅት)',
+      feeType: 'FIXED',
+      amountEtb: 5000,
+    },
+    {
+      feeCode: 'renewal-fee-grade2',
+      nameEn: 'Renewal Fee — Grade 2 (Medium Enterprise)',
+      nameAm: 'የታደሳ ክፍያ — ደረጃ 2 (መካከለኛ ድርጅት)',
+      feeType: 'FIXED',
+      amountEtb: 2000,
+    },
+    {
+      feeCode: 'renewal-fee-grade3',
+      nameEn: 'Renewal Fee — Grade 3 (Small Enterprise)',
+      nameAm: 'የታደሳ ክፍያ — ደረጃ 3 (ትንሽ ድርጅት)',
+      feeType: 'FIXED',
+      amountEtb: 500,
+    },
   ];
 
   for (const fee of tradeFees) {
@@ -481,13 +935,24 @@ async function main() {
               sub_city: { type: 'string', title: 'Sub-City / Zone', titleAm: 'ክፍለ ከተማ / ዞን' },
               woreda: { type: 'string', title: 'Woreda', titleAm: 'ወረዳ' },
               kebele: { type: 'string', title: 'Kebele', titleAm: 'ቀበሌ' },
-              house_number: { type: 'string', title: 'House / Plot Number', titleAm: 'ቤት / ፕሎት ቁጥር' },
+              house_number: {
+                type: 'string',
+                title: 'House / Plot Number',
+                titleAm: 'ቤት / ፕሎት ቁጥር',
+              },
             },
           },
         },
       },
       uiSchema: {
-        'ui:order': ['license_number', 'fiscal_year', 'annual_revenue', 'employee_count', 'business_address_changed', 'new_address'],
+        'ui:order': [
+          'license_number',
+          'fiscal_year',
+          'annual_revenue',
+          'employee_count',
+          'business_address_changed',
+          'new_address',
+        ],
         new_address: { 'ui:condition': { field: 'business_address_changed', value: true } },
       },
     },
@@ -502,7 +967,8 @@ async function main() {
       code: 'et-manufacturing-permit',
       nameEn: 'Manufacturing Investment Permit',
       nameAm: 'የማኑፋክቸሪንግ ኢንቨስትመንት ፈቃድ',
-      descriptionEn: 'Obtain a manufacturing investment permit from the Ministry of Industry. Required for all new manufacturing enterprises. Includes technical assessment, environmental review, and permit issuance.',
+      descriptionEn:
+        'Obtain a manufacturing investment permit from the Ministry of Industry. Required for all new manufacturing enterprises. Includes technical assessment, environmental review, and permit issuance.',
       descriptionAm: 'ከኢንዱስትሪ ሚኒስቴር የማኑፋክቸሪንግ ኢንቨስትመንት ፈቃድ ያውጡ። ለሁሉም አዲስ ማምረቻ ድርጅቶች ያስፈልጋል።',
       ministryEn: 'Ministry of Industry',
       ministryAm: 'የኢንዱስትሪ ሚኒስቴር',
@@ -513,15 +979,57 @@ async function main() {
   });
 
   const manufacturingSteps = [
-    { stepCode: 'technical-assessment', stepOrder: 1, nameEn: 'Technical Assessment', nameAm: 'ቴክኒካዊ ግምገማ', assignedRole: 'operator:technical-assessor', slaHours: 72, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'], nextStepCode: 'environmental-review' },
-    { stepCode: 'environmental-review', stepOrder: 2, nameEn: 'Environmental Impact Review', nameAm: 'የአካባቢ ተፅእኖ ግምገማ', assignedRole: 'operator:environmental-officer', slaHours: 120, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'], nextStepCode: 'permit-review' },
-    { stepCode: 'permit-review', stepOrder: 3, nameEn: 'Permit Review', nameAm: 'ፈቃድ ግምገማ', assignedRole: 'operator:permit-authority', slaHours: 48, isTerminal: false, allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'], nextStepCode: 'permit-issuance' },
-    { stepCode: 'permit-issuance', stepOrder: 4, nameEn: 'Permit Issuance', nameAm: 'ፈቃድ መስጠት', assignedRole: 'operator:permit-authority', slaHours: 8, isTerminal: true, allowedActions: ['APPROVE', 'REJECT'], nextStepCode: null },
+    {
+      stepCode: 'technical-assessment',
+      stepOrder: 1,
+      nameEn: 'Technical Assessment',
+      nameAm: 'ቴክኒካዊ ግምገማ',
+      assignedRole: 'operator:technical-assessor',
+      slaHours: 72,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'],
+      nextStepCode: 'environmental-review',
+    },
+    {
+      stepCode: 'environmental-review',
+      stepOrder: 2,
+      nameEn: 'Environmental Impact Review',
+      nameAm: 'የአካባቢ ተፅእኖ ግምገማ',
+      assignedRole: 'operator:environmental-officer',
+      slaHours: 120,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK', 'REQUEST_INFO'],
+      nextStepCode: 'permit-review',
+    },
+    {
+      stepCode: 'permit-review',
+      stepOrder: 3,
+      nameEn: 'Permit Review',
+      nameAm: 'ፈቃድ ግምገማ',
+      assignedRole: 'operator:permit-authority',
+      slaHours: 48,
+      isTerminal: false,
+      allowedActions: ['APPROVE', 'REJECT', 'SEND_BACK'],
+      nextStepCode: 'permit-issuance',
+    },
+    {
+      stepCode: 'permit-issuance',
+      stepOrder: 4,
+      nameEn: 'Permit Issuance',
+      nameAm: 'ፈቃድ መስጠት',
+      assignedRole: 'operator:permit-authority',
+      slaHours: 8,
+      isTerminal: true,
+      allowedActions: ['APPROVE', 'REJECT'],
+      nextStepCode: null,
+    },
   ];
 
   for (const step of manufacturingSteps) {
     await prisma.workflowStep.upsert({
-      where: { serviceId_stepCode: { serviceId: serviceManufacturing.id, stepCode: step.stepCode } },
+      where: {
+        serviceId_stepCode: { serviceId: serviceManufacturing.id, stepCode: step.stepCode },
+      },
       update: { allowedActions: step.allowedActions },
       create: {
         serviceId: serviceManufacturing.id,
@@ -540,9 +1048,36 @@ async function main() {
   }
 
   const manufacturingFees = [
-    { feeCode: 'application-fee', nameEn: 'Application Processing Fee', nameAm: 'የማመልከቻ ማስኬጃ ክፍያ', feeType: 'FIXED', amountEtb: 1000 },
-    { feeCode: 'inspection-fee', nameEn: 'Factory Inspection Fee', nameAm: 'የፋብሪካ ምርመራ ክፍያ', feeType: 'FIXED', amountEtb: 3000 },
-    { feeCode: 'esia-review-fee', nameEn: 'Environmental & Social Impact Assessment Fee', nameAm: 'የአካባቢ እና ማህበራዊ ተፅእኖ ምዘና ክፍያ', feeType: 'CONDITIONAL', amountEtb: null, conditions: { if: { field: 'environmental_impact_category', operator: 'eq', value: 'A' }, then: { amount: 15000 }, else: { if: { field: 'environmental_impact_category', operator: 'eq', value: 'B' }, then: { amount: 8000 }, else: { amount: 3000 } } } },
+    {
+      feeCode: 'application-fee',
+      nameEn: 'Application Processing Fee',
+      nameAm: 'የማመልከቻ ማስኬጃ ክፍያ',
+      feeType: 'FIXED',
+      amountEtb: 1000,
+    },
+    {
+      feeCode: 'inspection-fee',
+      nameEn: 'Factory Inspection Fee',
+      nameAm: 'የፋብሪካ ምርመራ ክፍያ',
+      feeType: 'FIXED',
+      amountEtb: 3000,
+    },
+    {
+      feeCode: 'esia-review-fee',
+      nameEn: 'Environmental & Social Impact Assessment Fee',
+      nameAm: 'የአካባቢ እና ማህበራዊ ተፅእኖ ምዘና ክፍያ',
+      feeType: 'CONDITIONAL',
+      amountEtb: null,
+      conditions: {
+        if: { field: 'environmental_impact_category', operator: 'eq', value: 'A' },
+        then: { amount: 15000 },
+        else: {
+          if: { field: 'environmental_impact_category', operator: 'eq', value: 'B' },
+          then: { amount: 8000 },
+          else: { amount: 3000 },
+        },
+      },
+    },
   ];
 
   for (const fee of manufacturingFees) {
@@ -572,7 +1107,15 @@ async function main() {
       titleAm: 'የማኑፋክቸሪንግ ኢንቨስትመንት ፈቃድ ማመልከቻ ቅጽ',
       schema: {
         type: 'object',
-        required: ['company_registration_number', 'manufacturing_sector', 'production_capacity', 'raw_materials', 'factory_location', 'environmental_impact_category', 'employment_plan'],
+        required: [
+          'company_registration_number',
+          'manufacturing_sector',
+          'production_capacity',
+          'raw_materials',
+          'factory_location',
+          'environmental_impact_category',
+          'employment_plan',
+        ],
         properties: {
           company_registration_number: {
             type: 'string',
@@ -592,8 +1135,18 @@ async function main() {
             required: ['quantity', 'unit', 'product_description'],
             properties: {
               quantity: { type: 'number', minimum: 0, title: 'Quantity', titleAm: 'መጠን' },
-              unit: { type: 'string', enum: ['tonnes', 'units', 'litres', 'sq_metres', 'kg'], title: 'Unit', titleAm: 'መለኪያ' },
-              product_description: { type: 'string', maxLength: 500, title: 'Product Description', titleAm: 'የምርት መግለጫ' },
+              unit: {
+                type: 'string',
+                enum: ['tonnes', 'units', 'litres', 'sq_metres', 'kg'],
+                title: 'Unit',
+                titleAm: 'መለኪያ',
+              },
+              product_description: {
+                type: 'string',
+                maxLength: 500,
+                title: 'Product Description',
+                titleAm: 'የምርት መግለጫ',
+              },
             },
           },
           raw_materials: {
@@ -606,8 +1159,18 @@ async function main() {
               required: ['material_name', 'annual_quantity_tonnes', 'source'],
               properties: {
                 material_name: { type: 'string', title: 'Material Name', titleAm: 'የጥሬ እቃ ስም' },
-                annual_quantity_tonnes: { type: 'number', minimum: 0, title: 'Annual Quantity (tonnes)', titleAm: 'ዓመታዊ መጠን (ቶን)' },
-                source: { type: 'string', enum: ['LOCAL', 'IMPORTED', 'MIXED'], title: 'Source', titleAm: 'ምንጭ' },
+                annual_quantity_tonnes: {
+                  type: 'number',
+                  minimum: 0,
+                  title: 'Annual Quantity (tonnes)',
+                  titleAm: 'ዓመታዊ መጠን (ቶን)',
+                },
+                source: {
+                  type: 'string',
+                  enum: ['LOCAL', 'IMPORTED', 'MIXED'],
+                  title: 'Source',
+                  titleAm: 'ምንጭ',
+                },
               },
             },
           },
@@ -620,10 +1183,31 @@ async function main() {
               region: { type: 'string', title: 'Region', titleAm: 'ክልል' },
               sub_city: { type: 'string', title: 'Sub-City / Zone', titleAm: 'ክፍለ ከተማ / ዞን' },
               woreda: { type: 'string', title: 'Woreda', titleAm: 'ወረዳ' },
-              industrial_zone: { type: 'string', title: 'Industrial Zone / Site', titleAm: 'የኢንዱስትሪ ዞን / ቦታ' },
-              plot_area_sqm: { type: 'number', minimum: 0, title: 'Plot Area (sq. metres)', titleAm: 'የቦታ ስፋት (ካሬ ሜትር)' },
-              gps_latitude: { type: 'number', minimum: 3.4, maximum: 14.9, title: 'GPS Latitude', titleAm: 'ጂፒኤስ ኬክሮስ' },
-              gps_longitude: { type: 'number', minimum: 33.0, maximum: 48.0, title: 'GPS Longitude', titleAm: 'ጂፒኤስ ምህዋር' },
+              industrial_zone: {
+                type: 'string',
+                title: 'Industrial Zone / Site',
+                titleAm: 'የኢንዱስትሪ ዞን / ቦታ',
+              },
+              plot_area_sqm: {
+                type: 'number',
+                minimum: 0,
+                title: 'Plot Area (sq. metres)',
+                titleAm: 'የቦታ ስፋት (ካሬ ሜትር)',
+              },
+              gps_latitude: {
+                type: 'number',
+                minimum: 3.4,
+                maximum: 14.9,
+                title: 'GPS Latitude',
+                titleAm: 'ጂፒኤስ ኬክሮስ',
+              },
+              gps_longitude: {
+                type: 'number',
+                minimum: 33.0,
+                maximum: 48.0,
+                title: 'GPS Longitude',
+                titleAm: 'ጂፒኤስ ምህዋር',
+              },
             },
           },
           environmental_impact_category: {
@@ -632,8 +1216,16 @@ async function main() {
             titleAm: 'የአካባቢ ተፅእኖ ምድብ',
             enum: ['A', 'B', 'C'],
             enumLabels: {
-              en: { A: 'Category A — Significant impact (full ESIA required)', B: 'Category B — Moderate impact (partial assessment)', C: 'Category C — Minimal impact (screening only)' },
-              am: { A: 'ምድብ A — ከፍተኛ ተፅእኖ (ሙሉ ESIA ያስፈልጋል)', B: 'ምድብ B — መካከለኛ ተፅእኖ (ከፊል ምዘና)', C: 'ምድብ C — አነስተኛ ተፅእኖ (ምርመራ ብቻ)' },
+              en: {
+                A: 'Category A — Significant impact (full ESIA required)',
+                B: 'Category B — Moderate impact (partial assessment)',
+                C: 'Category C — Minimal impact (screening only)',
+              },
+              am: {
+                A: 'ምድብ A — ከፍተኛ ተፅእኖ (ሙሉ ESIA ያስፈልጋል)',
+                B: 'ምድብ B — መካከለኛ ተፅእኖ (ከፊል ምዘና)',
+                C: 'ምድብ C — አነስተኛ ተፅእኖ (ምርመራ ብቻ)',
+              },
             },
           },
           employment_plan: {
@@ -642,17 +1234,49 @@ async function main() {
             titleAm: 'የሥራ ዕድል እቅድ',
             required: ['total_jobs', 'skilled_jobs', 'unskilled_jobs'],
             properties: {
-              total_jobs: { type: 'integer', minimum: 1, title: 'Total Jobs Created', titleAm: 'ጠቅላላ የተፈጠሩ የሥራ ዕድሎች' },
-              skilled_jobs: { type: 'integer', minimum: 0, title: 'Skilled Jobs', titleAm: 'የሙያ ሥራ ዕድሎች' },
-              unskilled_jobs: { type: 'integer', minimum: 0, title: 'Unskilled Jobs', titleAm: 'ያልሰለጠኑ ሥራ ዕድሎች' },
-              female_percentage: { type: 'number', minimum: 0, maximum: 100, title: 'Target Female Employment (%)', titleAm: 'ዒላማ ሴት ሥራ ዕድል (%)' },
+              total_jobs: {
+                type: 'integer',
+                minimum: 1,
+                title: 'Total Jobs Created',
+                titleAm: 'ጠቅላላ የተፈጠሩ የሥራ ዕድሎች',
+              },
+              skilled_jobs: {
+                type: 'integer',
+                minimum: 0,
+                title: 'Skilled Jobs',
+                titleAm: 'የሙያ ሥራ ዕድሎች',
+              },
+              unskilled_jobs: {
+                type: 'integer',
+                minimum: 0,
+                title: 'Unskilled Jobs',
+                titleAm: 'ያልሰለጠኑ ሥራ ዕድሎች',
+              },
+              female_percentage: {
+                type: 'number',
+                minimum: 0,
+                maximum: 100,
+                title: 'Target Female Employment (%)',
+                titleAm: 'ዒላማ ሴት ሥራ ዕድል (%)',
+              },
             },
           },
         },
       },
       uiSchema: {
-        'ui:order': ['company_registration_number', 'manufacturing_sector', 'production_capacity', 'raw_materials', 'factory_location', 'environmental_impact_category', 'employment_plan'],
-        environmental_impact_category: { 'ui:help': 'Category A requires a full Environmental and Social Impact Assessment. Category B requires a partial assessment. Category C requires only a screening checklist.' },
+        'ui:order': [
+          'company_registration_number',
+          'manufacturing_sector',
+          'production_capacity',
+          'raw_materials',
+          'factory_location',
+          'environmental_impact_category',
+          'employment_plan',
+        ],
+        environmental_impact_category: {
+          'ui:help':
+            'Category A requires a full Environmental and Social Impact Assessment. Category B requires a partial assessment. Category C requires only a screening checklist.',
+        },
       },
     },
   });
@@ -667,11 +1291,36 @@ async function main() {
     business_sector: 'J62',
     registered_capital: 500000,
     shareholders: [
-      { full_name: 'Ayantu Bekele Gemechu', nationality: 'Ethiopian', id_type: 'FAYDA', id_number: 'ETH001234567890', share_percentage: 60 },
-      { full_name: 'Dawit Haile Tesfaye', nationality: 'Ethiopian', id_type: 'FAYDA', id_number: 'ETH002345678901', share_percentage: 40 },
+      {
+        full_name: 'Ayantu Bekele Gemechu',
+        nationality: 'Ethiopian',
+        id_type: 'FAYDA',
+        id_number: 'ETH001234567890',
+        share_percentage: 60,
+      },
+      {
+        full_name: 'Dawit Haile Tesfaye',
+        nationality: 'Ethiopian',
+        id_type: 'FAYDA',
+        id_number: 'ETH002345678901',
+        share_percentage: 40,
+      },
     ],
-    registered_address: { region: 'Addis Ababa', sub_city: 'Bole', woreda: '03', kebele: '14', house_number: 'Building A, Floor 3' },
-    managing_director: { full_name: 'Ayantu Bekele Gemechu', nationality: 'Ethiopian', id_type: 'FAYDA', id_number: 'ETH001234567890', phone: '+251911234567', email: 'ayantu@addistech.et' },
+    registered_address: {
+      region: 'Addis Ababa',
+      sub_city: 'Bole',
+      woreda: '03',
+      kebele: '14',
+      house_number: 'Building A, Floor 3',
+    },
+    managing_director: {
+      full_name: 'Ayantu Bekele Gemechu',
+      nationality: 'Ethiopian',
+      id_type: 'FAYDA',
+      id_number: 'ETH001234567890',
+      phone: '+251911234567',
+      email: 'ayantu@addistech.et',
+    },
   };
 
   // Application 1: PLC — PENDING at name-review
@@ -686,7 +1335,10 @@ async function main() {
       currentStep: 'name-review',
       eFormVersion: 1,
       formData: plcFormData,
-      calculatedFees: { 'registration-fee': { nameEn: 'Registration Fee', amountEtb: 500 }, 'capital-duty': { nameEn: 'Capital Duty', amountEtb: 500 } },
+      calculatedFees: {
+        'registration-fee': { nameEn: 'Registration Fee', amountEtb: 500 },
+        'capital-duty': { nameEn: 'Capital Duty', amountEtb: 500 },
+      },
     },
   });
 
@@ -728,8 +1380,15 @@ async function main() {
       status: 'APPROVED',
       currentStep: 'certificate-issuance',
       eFormVersion: 1,
-      formData: { ...plcFormData, company_name_en: 'Green Ethiopia Agro PLC', registered_capital: 2000000 },
-      calculatedFees: { 'registration-fee': { nameEn: 'Registration Fee', amountEtb: 500 }, 'capital-duty': { nameEn: 'Capital Duty', amountEtb: 2000 } },
+      formData: {
+        ...plcFormData,
+        company_name_en: 'Green Ethiopia Agro PLC',
+        registered_capital: 2000000,
+      },
+      calculatedFees: {
+        'registration-fee': { nameEn: 'Registration Fee', amountEtb: 500 },
+        'capital-duty': { nameEn: 'Capital Duty', amountEtb: 2000 },
+      },
       registryRef: 'REG-2016-00042',
       certificateUrl: 'https://registry.moti.gov.et/certificates/REG-2016-00042.pdf',
       completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -757,7 +1416,9 @@ async function main() {
       currentStep: 'license-review',
       eFormVersion: 1,
       formData: tradeFormData,
-      calculatedFees: { 'renewal-fee-grade1': { nameEn: 'Renewal Fee — Grade 1', amountEtb: 5000 } },
+      calculatedFees: {
+        'renewal-fee-grade1': { nameEn: 'Renewal Fee — Grade 1', amountEtb: 5000 },
+      },
     },
   });
 
@@ -810,11 +1471,30 @@ async function main() {
   const manufacturingFormData = {
     company_registration_number: 'REG-2015-00789',
     manufacturing_sector: 'C15',
-    production_capacity: { quantity: 500000, unit: 'units', product_description: 'Leather shoes and footwear for export' },
-    raw_materials: [{ material_name: 'Bovine leather hides', annual_quantity_tonnes: 250, source: 'LOCAL' }, { material_name: 'Synthetic sole material', annual_quantity_tonnes: 50, source: 'IMPORTED' }],
-    factory_location: { region: 'Oromia', woreda: 'Sululta', industrial_zone: 'Sululta Industrial Park', plot_area_sqm: 5000, gps_latitude: 9.1256, gps_longitude: 38.7645 },
+    production_capacity: {
+      quantity: 500000,
+      unit: 'units',
+      product_description: 'Leather shoes and footwear for export',
+    },
+    raw_materials: [
+      { material_name: 'Bovine leather hides', annual_quantity_tonnes: 250, source: 'LOCAL' },
+      { material_name: 'Synthetic sole material', annual_quantity_tonnes: 50, source: 'IMPORTED' },
+    ],
+    factory_location: {
+      region: 'Oromia',
+      woreda: 'Sululta',
+      industrial_zone: 'Sululta Industrial Park',
+      plot_area_sqm: 5000,
+      gps_latitude: 9.1256,
+      gps_longitude: 38.7645,
+    },
     environmental_impact_category: 'B',
-    employment_plan: { total_jobs: 250, skilled_jobs: 50, unskilled_jobs: 200, female_percentage: 60 },
+    employment_plan: {
+      total_jobs: 250,
+      skilled_jobs: 50,
+      unskilled_jobs: 200,
+      female_percentage: 60,
+    },
   };
 
   // Application 5: Manufacturing — PENDING at technical-assessment
@@ -829,7 +1509,10 @@ async function main() {
       currentStep: 'technical-assessment',
       eFormVersion: 1,
       formData: manufacturingFormData,
-      calculatedFees: { 'application-fee': { nameEn: 'Application Processing Fee', amountEtb: 1000 }, 'inspection-fee': { nameEn: 'Factory Inspection Fee', amountEtb: 3000 } },
+      calculatedFees: {
+        'application-fee': { nameEn: 'Application Processing Fee', amountEtb: 1000 },
+        'inspection-fee': { nameEn: 'Factory Inspection Fee', amountEtb: 3000 },
+      },
     },
   });
 
@@ -858,8 +1541,15 @@ async function main() {
       status: 'SENT_BACK',
       currentStep: 'technical-assessment',
       eFormVersion: 1,
-      formData: { ...manufacturingFormData, manufacturing_sector: 'C24', company_registration_number: 'REG-2016-01122' },
-      calculatedFees: { 'application-fee': { nameEn: 'Application Processing Fee', amountEtb: 1000 }, 'inspection-fee': { nameEn: 'Factory Inspection Fee', amountEtb: 3000 } },
+      formData: {
+        ...manufacturingFormData,
+        manufacturing_sector: 'C24',
+        company_registration_number: 'REG-2016-01122',
+      },
+      calculatedFees: {
+        'application-fee': { nameEn: 'Application Processing Fee', amountEtb: 1000 },
+        'inspection-fee': { nameEn: 'Factory Inspection Fee', amountEtb: 3000 },
+      },
     },
   });
 
@@ -872,7 +1562,8 @@ async function main() {
       fromStatus: 'PENDING',
       toStatus: 'SENT_BACK',
       changedById: userTigist.id,
-      reason: 'GPS coordinates for factory location appear to be outside the designated industrial zone. Please verify and resubmit with corrected coordinates.',
+      reason:
+        'GPS coordinates for factory location appear to be outside the designated industrial zone. Please verify and resubmit with corrected coordinates.',
       correlationId: 'seed-correlation-006',
     },
   });
@@ -882,7 +1573,9 @@ async function main() {
   void app6;
 
   console.log('Seed completed successfully.');
-  console.log(`  Users: 5 (${userAyantu.id}, ${userDawit.id}, ${userMekdes.id}, ${userYonas.id}, ${userTigist.id})`);
+  console.log(
+    `  Users: 5 (${userAyantu.id}, ${userDawit.id}, ${userMekdes.id}, ${userYonas.id}, ${userTigist.id})`,
+  );
   console.log(`  Services: 3 (${servicePlc.id}, ${serviceTrade.id}, ${serviceManufacturing.id})`);
   console.log('  ESIC Codes:', esicCodes.length);
   console.log('  Applications: 6');

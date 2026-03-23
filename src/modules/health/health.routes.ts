@@ -121,12 +121,11 @@ export async function healthRoutes(fastify: FastifyInstance): Promise<void> {
       }
 
       const isReady = dbStatus === 'ok' && redisStatus === 'ok';
-      const status: ReadyResponse['status'] =
-        isReady
-          ? 'ok'
-          : dbStatus === 'error' && redisStatus === 'error'
-            ? 'down'
-            : 'degraded';
+      const status: ReadyResponse['status'] = isReady
+        ? 'ok'
+        : dbStatus === 'error' && redisStatus === 'error'
+          ? 'down'
+          : 'degraded';
 
       return reply.status(isReady ? 200 : 503).send({
         status,

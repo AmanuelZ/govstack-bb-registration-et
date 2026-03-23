@@ -18,27 +18,44 @@ function getActorId(request: FastifyRequest): string {
   throw AppError.unauthorized('Authentication required');
 }
 
-export async function submitApplication(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+export async function submitApplication(
+  request: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const { serviceId } = ServiceApplicationParamsSchema.parse(request.params);
   const body = SubmitApplicationSchema.parse(request.body);
   const applicantId = getActorId(request);
-  const application = await getAppService().submit(serviceId, applicantId, body, request.correlationId);
+  const application = await getAppService().submit(
+    serviceId,
+    applicantId,
+    body,
+    request.correlationId,
+  );
   void reply.status(201).send(application);
 }
 
-export async function listApplications(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+export async function listApplications(
+  request: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const query = ApplicationListQuerySchema.parse(request.query);
   const result = await getAppService().list(query);
   void reply.send(result);
 }
 
-export async function getApplicationByFileId(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+export async function getApplicationByFileId(
+  request: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const { fileId } = ApplicationParamsSchema.parse(request.params);
   const application = await getAppService().getByFileId(fileId);
   void reply.send(application);
 }
 
-export async function updateApplication(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+export async function updateApplication(
+  request: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const { fileId } = ApplicationParamsSchema.parse(request.params);
   const body = UpdateApplicationSchema.parse(request.body);
   const actorId = getActorId(request);

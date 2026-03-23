@@ -18,7 +18,18 @@ export const ApplicationListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
   serviceId: z.string().uuid().optional(),
   applicantId: z.string().uuid().optional(),
-  status: z.enum(['DRAFT', 'PENDING', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'SENT_BACK', 'WITHDRAWN', 'EXPIRED']).optional(),
+  status: z
+    .enum([
+      'DRAFT',
+      'PENDING',
+      'IN_REVIEW',
+      'APPROVED',
+      'REJECTED',
+      'SENT_BACK',
+      'WITHDRAWN',
+      'EXPIRED',
+    ])
+    .optional(),
 });
 
 export const UpdateApplicationSchema = z.object({
@@ -40,7 +51,19 @@ export const applicationSchema = {
     fileId: { type: 'string', format: 'uuid' },
     serviceId: { type: 'string', format: 'uuid' },
     applicantId: { type: 'string', format: 'uuid' },
-    status: { type: 'string', enum: ['DRAFT', 'PENDING', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'SENT_BACK', 'WITHDRAWN', 'EXPIRED'] },
+    status: {
+      type: 'string',
+      enum: [
+        'DRAFT',
+        'PENDING',
+        'IN_REVIEW',
+        'APPROVED',
+        'REJECTED',
+        'SENT_BACK',
+        'WITHDRAWN',
+        'EXPIRED',
+      ],
+    },
     currentStep: { type: 'string', nullable: true },
     eFormVersion: { type: 'integer' },
     formData: { type: 'object', additionalProperties: true },

@@ -27,7 +27,9 @@ export class PaymentBBClient {
     if (this.isMock) {
       return this.mockInitiatePayment(request);
     }
-    throw new Error('Real Payment BB integration not yet configured. Set PAYMENT_BB_URL environment variable.');
+    throw new Error(
+      'Real Payment BB integration not yet configured. Set PAYMENT_BB_URL environment variable.',
+    );
   }
 
   /**

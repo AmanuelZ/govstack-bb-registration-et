@@ -28,7 +28,20 @@ export const serviceSchema = {
     createdAt: { type: 'string', format: 'date-time' },
     updatedAt: { type: 'string', format: 'date-time' },
   },
-  required: ['id', 'code', 'nameEn', 'nameAm', 'descriptionEn', 'descriptionAm', 'ministryEn', 'ministryAm', 'isActive', 'estimatedDays', 'createdAt', 'updatedAt'],
+  required: [
+    'id',
+    'code',
+    'nameEn',
+    'nameAm',
+    'descriptionEn',
+    'descriptionAm',
+    'ministryEn',
+    'ministryAm',
+    'isActive',
+    'estimatedDays',
+    'createdAt',
+    'updatedAt',
+  ],
 } as const;
 
 export type ServiceListQuery = z.infer<typeof ServiceListQuerySchema>;

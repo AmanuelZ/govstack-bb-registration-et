@@ -68,9 +68,9 @@ export type UserRole =
 
 /** Fayda identity claims extracted from eSignet OIDC token */
 export interface FaydaClaims {
-  sub: string;           // PSUT — Pairwise Subject Token (Fayda FIN derivative)
-  name?: string;         // Full name in Latin script
-  nameAm?: string;       // Full name in Amharic
+  sub: string; // PSUT — Pairwise Subject Token (Fayda FIN derivative)
+  name?: string; // Full name in Latin script
+  nameAm?: string; // Full name in Amharic
   gender?: string;
   birthdate?: string;
   phoneNumber?: string;

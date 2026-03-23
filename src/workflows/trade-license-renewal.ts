@@ -73,7 +73,8 @@ export const tradeLicenseRenewalDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'LABOR_CLEARANCE',
-      message: 'Businesses with more than 50 employees require clearance from the Ministry of Labor and Social Affairs',
+      message:
+        'Businesses with more than 50 employees require clearance from the Ministry of Labor and Social Affairs',
     },
   },
 ];
@@ -100,7 +101,7 @@ export function calculateRenewalFee(
   } else if (annualRevenue > 500000) {
     baseFee = 2000; // Grade 2
   } else {
-    baseFee = 500;  // Grade 3
+    baseFee = 500; // Grade 3
   }
 
   const latePenalty = WorkflowEngine.calculateLatePenalty(fiscalYearEnd, renewalDate);

@@ -19,7 +19,13 @@ export interface Determinant {
 }
 
 export interface DeterminantEffect {
-  type: 'require_field' | 'set_minimum' | 'add_fee' | 'add_document' | 'reject_submission' | 'add_workflow_step';
+  type:
+    | 'require_field'
+    | 'set_minimum'
+    | 'add_fee'
+    | 'add_document'
+    | 'reject_submission'
+    | 'add_workflow_step';
   target: string;
   params?: Record<string, unknown>;
   message?: string; // Shown to applicant if effect blocks submission
@@ -56,7 +62,10 @@ export class WorkflowEngine {
    * Evaluate all determinants for a service against submitted form data.
    * Returns validation result with any violations, additional fees, or extra document requirements.
    */
-  static evaluate(determinants: Determinant[], formData: Record<string, unknown>): EvaluationResult {
+  static evaluate(
+    determinants: Determinant[],
+    formData: Record<string, unknown>,
+  ): EvaluationResult {
     const violations: DeterminantViolation[] = [];
     const additionalFees: Record<string, number> = {};
     const additionalDocuments: string[] = [];
@@ -94,7 +103,9 @@ export class WorkflowEngine {
             violations.push({
               determinantId: det.id,
               name: det.name,
-              message: det.effect.message ?? `'${target}' must be at least ${String(minimum)} when ${det.name}`,
+              message:
+                det.effect.message ??
+                `'${target}' must be at least ${String(minimum)} when ${det.name}`,
             });
           }
           break;
@@ -128,15 +139,32 @@ export class WorkflowEngine {
     const fieldValue = WorkflowEngine.resolveField(det.field, formData);
 
     switch (det.operator) {
-      case 'eq': return fieldValue === det.value;
-      case 'neq': return fieldValue !== det.value;
-      case 'gt': return typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue > det.value;
-      case 'gte': return typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue >= det.value;
-      case 'lt': return typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue < det.value;
-      case 'lte': return typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue <= det.value;
-      case 'in': return Array.isArray(det.value) && det.value.includes(fieldValue);
-      case 'not_in': return Array.isArray(det.value) && !det.value.includes(fieldValue);
-      default: return false;
+      case 'eq':
+        return fieldValue === det.value;
+      case 'neq':
+        return fieldValue !== det.value;
+      case 'gt':
+        return (
+          typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue > det.value
+        );
+      case 'gte':
+        return (
+          typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue >= det.value
+        );
+      case 'lt':
+        return (
+          typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue < det.value
+        );
+      case 'lte':
+        return (
+          typeof fieldValue === 'number' && typeof det.value === 'number' && fieldValue <= det.value
+        );
+      case 'in':
+        return Array.isArray(det.value) && det.value.includes(fieldValue);
+      case 'not_in':
+        return Array.isArray(det.value) && !det.value.includes(fieldValue);
+      default:
+        return false;
     }
   }
 
@@ -177,7 +205,8 @@ export class WorkflowEngine {
    */
   static ethiopianFiscalYearEnd(gregorianYear: number): Date {
     // Pagume 5 is approximately September 10 in non-leap years, September 11 in leap years
-    const isLeap = (gregorianYear % 4 === 0 && gregorianYear % 100 !== 0) || gregorianYear % 400 === 0;
+    const isLeap =
+      (gregorianYear % 4 === 0 && gregorianYear % 100 !== 0) || gregorianYear % 400 === 0;
     return new Date(gregorianYear, 8, isLeap ? 11 : 10); // Month 8 = September (0-indexed)
   }
 

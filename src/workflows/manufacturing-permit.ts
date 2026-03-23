@@ -19,7 +19,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'FULL_ESIA_REPORT',
-      message: 'Category A projects require a comprehensive Environmental and Social Impact Assessment (ESIA) certified by the Ethiopian Environmental Authority',
+      message:
+        'Category A projects require a comprehensive Environmental and Social Impact Assessment (ESIA) certified by the Ethiopian Environmental Authority',
     },
   },
   {
@@ -31,7 +32,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'PUBLIC_CONSULTATION_RECORD',
-      message: 'Category A projects must provide a public consultation record from affected communities',
+      message:
+        'Category A projects must provide a public consultation record from affected communities',
     },
   },
   {
@@ -58,7 +60,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'WATER_USE_PERMIT',
-      message: 'Manufacturing operations with significant water consumption require a permit from the Ministry of Water and Energy',
+      message:
+        'Manufacturing operations with significant water consumption require a permit from the Ministry of Water and Energy',
     },
   },
 
@@ -72,7 +75,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'CHEMICAL_SAFETY_PLAN',
-      message: 'Operations using hazardous chemical materials require an approved Chemical Safety Plan',
+      message:
+        'Operations using hazardous chemical materials require an approved Chemical Safety Plan',
     },
   },
 
@@ -86,7 +90,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'EFDA_PRODUCT_REGISTRATION',
-      message: 'Food and beverage manufacturers must provide Ethiopian Food and Drug Authority (EFDA) product registration',
+      message:
+        'Food and beverage manufacturers must provide Ethiopian Food and Drug Authority (EFDA) product registration',
     },
   },
 
@@ -100,7 +105,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'EFDA_MANUFACTURING_LICENSE',
-      message: 'Pharmaceutical manufacturers require an EFDA Manufacturing License in addition to this permit',
+      message:
+        'Pharmaceutical manufacturers require an EFDA Manufacturing License in addition to this permit',
     },
   },
 
@@ -114,7 +120,8 @@ export const manufacturingPermitDeterminants: Determinant[] = [
     effect: {
       type: 'add_document',
       target: 'EIC_REGISTRATION',
-      message: 'Manufacturing operations employing 100+ permanent workers must be registered with the Ethiopian Investment Commission (EIC)',
+      message:
+        'Manufacturing operations employing 100+ permanent workers must be registered with the Ethiopian Investment Commission (EIC)',
     },
   },
 ];
@@ -123,9 +130,7 @@ export const manufacturingPermitDeterminants: Determinant[] = [
  * Calculate manufacturing permit total fee.
  * Base fees: application (1,000) + inspection (3,000) + ESIA review (varies by category)
  */
-export function calculateManufacturingPermitFee(
-  environmentalCategory: 'A' | 'B' | 'C',
-): {
+export function calculateManufacturingPermitFee(environmentalCategory: 'A' | 'B' | 'C'): {
   applicationFee: number;
   inspectionFee: number;
   esiaReviewFee: number;

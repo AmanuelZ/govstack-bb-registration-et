@@ -81,7 +81,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma migrate deploy
+      - run: npx prisma db push --accept-data-loss
       - run: npm run test:coverage
       - name: Upload coverage
         uses: codecov/codecov-action@v4

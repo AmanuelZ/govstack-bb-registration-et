@@ -17,9 +17,7 @@ const correlationPlugin: FastifyPluginAsync = async (fastify) => {
   fastify.addHook('onRequest', async (request, reply) => {
     const incoming = request.headers['x-correlation-id'];
     request.correlationId =
-      typeof incoming === 'string' && incoming.length > 0
-        ? incoming
-        : randomUUID();
+      typeof incoming === 'string' && incoming.length > 0 ? incoming : randomUUID();
 
     void reply.header('X-Correlation-Id', request.correlationId);
   });

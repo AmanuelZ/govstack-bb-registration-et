@@ -75,12 +75,16 @@ export async function exchangeCodeForTokens(
 ): Promise<{ userInfo: FaydaUserInfo; idTokenClaims: Record<string, unknown> }> {
   const client = await getFaydaClient();
 
-  const tokenSet = await client.callback(faydaConfig.redirectUri, { code }, {
-    code_verifier: codeVerifier,
-    nonce: expectedNonce,
-  });
+  const tokenSet = await client.callback(
+    faydaConfig.redirectUri,
+    { code },
+    {
+      code_verifier: codeVerifier,
+      nonce: expectedNonce,
+    },
+  );
 
-  const userInfo = await client.userinfo(tokenSet.access_token ?? '') as FaydaUserInfo;
+  const userInfo = (await client.userinfo(tokenSet.access_token ?? '')) as FaydaUserInfo;
   const idTokenClaims = tokenSet.claims() as Record<string, unknown>;
 
   return { userInfo, idTokenClaims };
