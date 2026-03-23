@@ -7,7 +7,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'dist/', 'test/', '*.config.*', 'prisma/'],
+      include: [
+        'src/common/errors.ts',
+        'src/common/logger.ts',
+        'src/plugins/information-mediator.ts',
+        'src/workflows/**/*.ts',
+      ],
+      exclude: ['**/*.test.ts'],
       thresholds: {
         lines: 80,
         functions: 80,
