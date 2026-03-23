@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci --frozen-lockfile
+RUN npm ci
 RUN npx prisma generate
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -61,7 +61,7 @@ ENV NODE_ENV=production
 # Only production deps
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm ci --frozen-lockfile --omit=dev
+RUN npm ci --omit=dev
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
