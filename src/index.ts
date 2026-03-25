@@ -11,6 +11,7 @@ import swaggerPlugin from './plugins/swagger.js';
 import rateLimitPlugin from './plugins/rate-limit.js';
 import authMiddleware from './integrations/fayda/middleware.js';
 import informationMediatorPlugin from './plugins/information-mediator.js';
+import localePlugin from './plugins/locale.js';
 
 // Routes
 import { healthRoutes } from './modules/health/health.routes.js';
@@ -52,6 +53,7 @@ export async function buildApp() {
 
   // Core plugins (order matters)
   await fastify.register(correlationPlugin);
+  await fastify.register(localePlugin);
   await fastify.register(corsPlugin);
   await fastify.register(swaggerPlugin);
   await fastify.register(rateLimitPlugin);
