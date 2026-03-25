@@ -3,6 +3,7 @@ import {
   tradeLicenseRenewalDeterminants,
   calculateRenewalFee,
   shouldCancelLicense,
+  getRenewalFiscalContext,
 } from './trade-license-renewal.js';
 import { WorkflowEngine } from './engine.js';
 
@@ -176,5 +177,29 @@ describe('shouldCancelLicense', () => {
     const afterThreshold = new Date('2025-03-11');
     expect(shouldCancelLicense(fiscalYearEnd, onThreshold)).toBe(false);
     expect(shouldCancelLicense(fiscalYearEnd, afterThreshold)).toBe(true);
+  });
+});
+
+describe('getRenewalFiscalContext', () => {
+  it('returns correct Ethiopian year for a date after Enkutatash', () => {
+    const ctx = getRenewalFiscalContext(new Date(2024, 8, 15)); // Sept 15, 2024
+    expect(ctx.ethYear).toBe(2017);
+  });
+
+  it('returns correct Ethiopian year for a date before Enkutatash', () => {
+    const ctx = getRenewalFiscalContext(new Date(2024, 7, 15)); // Aug 15, 2024
+    expect(ctx.ethYear).toBe(2016);
+  });
+
+  it('returns fiscal year end as a valid Date', () => {
+    const ctx = getRenewalFiscalContext(new Date(2024, 8, 15));
+    expect(ctx.fiscalYearEnd).toBeInstanceOf(Date);
+    expect(ctx.fiscalYearEnd.getMonth()).toBe(8); // September
+  });
+
+  it('returns formatted dates in English and Amharic', () => {
+    const ctx = getRenewalFiscalContext(new Date(2024, 8, 15));
+    expect(ctx.fiscalYearEndFormatted).toContain('E.C.');
+    expect(ctx.fiscalYearEndFormattedAm).toContain('ዓ.ም.');
   });
 });

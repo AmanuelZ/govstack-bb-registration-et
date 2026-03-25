@@ -12,6 +12,8 @@ export default defineConfig({
         'src/common/logger.ts',
         'src/plugins/information-mediator.ts',
         'src/workflows/**/*.ts',
+        'src/utils/**/*.ts',
+        'src/i18n/**/*.ts',
       ],
       exclude: ['**/*.test.ts'],
       thresholds: {

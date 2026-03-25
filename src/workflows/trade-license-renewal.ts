@@ -1,5 +1,10 @@
 import type { Determinant } from './engine.js';
 import { WorkflowEngine } from './engine.js';
+import {
+  dateToEthiopian,
+  getFiscalYearBounds,
+  formatEthiopianDate,
+} from '../utils/ethiopian-calendar.js';
 
 /**
  * Determinants for Ethiopian Trade License Renewal.
@@ -131,4 +136,27 @@ export function shouldCancelLicense(fiscalYearEnd: Date, renewalDate: Date): boo
   const cancellationThreshold = new Date(fiscalYearEnd);
   cancellationThreshold.setMonth(cancellationThreshold.getMonth() + 6);
   return renewalDate > cancellationThreshold;
+}
+
+/**
+ * Get the Ethiopian fiscal year end date for a renewal using the proper Ethiopian calendar.
+ * Uses actual calendar conversion instead of hardcoded Gregorian approximation.
+ *
+ * @param gregorianDate - The date to determine fiscal year for
+ * @returns Object with Ethiopian year info and Gregorian fiscal year end date
+ */
+export function getRenewalFiscalContext(gregorianDate: Date): {
+  ethYear: number;
+  fiscalYearEnd: Date;
+  fiscalYearEndFormatted: string;
+  fiscalYearEndFormattedAm: string;
+} {
+  const eth = dateToEthiopian(gregorianDate);
+  const { end } = getFiscalYearBounds(eth.year);
+  return {
+    ethYear: eth.year,
+    fiscalYearEnd: end,
+    fiscalYearEndFormatted: formatEthiopianDate({ year: eth.year, month: 13, day: end.getDate() === 11 ? 6 : 5 }, 'en'),
+    fiscalYearEndFormattedAm: formatEthiopianDate({ year: eth.year, month: 13, day: end.getDate() === 11 ? 6 : 5 }, 'am'),
+  };
 }

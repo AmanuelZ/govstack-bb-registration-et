@@ -8,6 +8,7 @@ export {
   tradeLicenseRenewalDeterminants,
   calculateRenewalFee,
   shouldCancelLicense,
+  getRenewalFiscalContext,
 } from './trade-license-renewal.js';
 export {
   manufacturingPermitDeterminants,
