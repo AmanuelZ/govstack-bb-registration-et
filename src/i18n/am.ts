@@ -82,4 +82,16 @@ export const am: TranslationShape = {
     fiscalYear: 'የኢትዮጵያ በጀት ዓመት {{year}} ዓ.ም.',
     fiscalYearEnd: 'የበጀት ዓመቱ {{date}} ላይ ያበቃል',
   },
+
+  // ── የማመልከቻ ሁኔታ ──────────────────────────────────────────────────────
+  status: {
+    DRAFT: 'ረቂቅ',
+    PENDING: 'በመጠባበቅ ላይ',
+    IN_REVIEW: 'በግምገማ ላይ',
+    APPROVED: 'ጸድቋል',
+    REJECTED: 'ውድቅ ተደርጓል',
+    SENT_BACK: 'ተመልሷል',
+    WITHDRAWN: 'ተሰርዟል',
+    EXPIRED: 'ጊዜው አልፏል',
+  },
 } as const;

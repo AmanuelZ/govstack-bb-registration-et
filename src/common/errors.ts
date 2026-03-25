@@ -1,6 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import type { GovStackError } from './types.js';
 import { randomUUID } from 'crypto';
+import { t, type Locale } from '../i18n/index.js';
 
 /** Standard error codes aligned with GovStack CFR */
 export enum ErrorCode {
@@ -30,42 +31,57 @@ export class AppError extends Error {
   public readonly statusCode: number;
   public readonly errorCode: ErrorCode;
   public readonly details: Record<string, unknown> | undefined;
+  /** i18n translation key for localized message (e.g. 'errors.notFound') */
+  public readonly i18nKey: string | undefined;
+  /** Parameters for i18n template interpolation */
+  public readonly i18nParams: Record<string, string | number> | undefined;
 
   constructor(
     message: string,
     statusCode: number,
     errorCode: ErrorCode,
     details?: Record<string, unknown>,
+    i18nKey?: string,
+    i18nParams?: Record<string, string | number>,
   ) {
     super(message);
     this.name = 'AppError';
     this.statusCode = statusCode;
     this.errorCode = errorCode;
     this.details = details;
+    this.i18nKey = i18nKey;
+    this.i18nParams = i18nParams;
   }
 
   static badRequest(message: string, details?: Record<string, unknown>): AppError {
-    return new AppError(message, 400, ErrorCode.BAD_REQUEST, details);
+    return new AppError(message, 400, ErrorCode.BAD_REQUEST, details, 'errors.badRequest');
   }
 
   static unauthorized(message: string): AppError {
-    return new AppError(message, 401, ErrorCode.UNAUTHORIZED);
+    return new AppError(message, 401, ErrorCode.UNAUTHORIZED, undefined, 'errors.unauthorized');
   }
 
   static forbidden(message: string): AppError {
-    return new AppError(message, 403, ErrorCode.FORBIDDEN);
+    return new AppError(message, 403, ErrorCode.FORBIDDEN, undefined, 'errors.forbidden');
   }
 
   static notFound(resource: string, id: string): AppError {
-    return new AppError(`${resource} '${id}' not found`, 404, ErrorCode.NOT_FOUND);
+    return new AppError(
+      `${resource} '${id}' not found`,
+      404,
+      ErrorCode.NOT_FOUND,
+      undefined,
+      'errors.notFound',
+      { resource, id },
+    );
   }
 
   static conflict(message: string): AppError {
-    return new AppError(message, 409, ErrorCode.CONFLICT);
+    return new AppError(message, 409, ErrorCode.CONFLICT, undefined, 'errors.conflict');
   }
 
   static unprocessable(message: string, details?: Record<string, unknown>): AppError {
-    return new AppError(message, 422, ErrorCode.UNPROCESSABLE, details);
+    return new AppError(message, 422, ErrorCode.UNPROCESSABLE, details, 'errors.unprocessable');
   }
 
   static invalidWorkflowTransition(from: string, to: string): AppError {
@@ -73,6 +89,8 @@ export class AppError extends Error {
       `Invalid workflow transition from '${from}' to '${to}'`,
       422,
       ErrorCode.INVALID_WORKFLOW_TRANSITION,
+      { from, to },
+      'errors.invalidWorkflowTransition',
       { from, to },
     );
   }
@@ -83,12 +101,27 @@ export class AppError extends Error {
       400,
       ErrorCode.IM_HEADER_INVALID,
       { header },
+      'errors.imHeaderInvalid',
+      { header },
     );
   }
 }
 
 /**
+ * Resolve the localized error message for an AppError.
+ * If the request has a locale set (via Accept-Language middleware) and the error
+ * has an i18n key, returns the translated message. Otherwise returns the English default.
+ */
+function localizeMessage(error: AppError, locale: Locale): string {
+  if (error.i18nKey) {
+    return t(error.i18nKey, error.i18nParams, locale);
+  }
+  return error.message;
+}
+
+/**
  * Fastify error handler — converts all errors to GovStack-compliant JSON responses.
+ * Supports content negotiation via Accept-Language header (en, am).
  * Ensures correlation IDs are always present in error responses.
  */
 export function errorHandler(
@@ -97,13 +130,13 @@ export function errorHandler(
   reply: FastifyReply,
 ): void {
   const correlationId = (request.headers['x-correlation-id'] as string | undefined) ?? randomUUID();
-
   const timestamp = new Date().toISOString();
+  const locale: Locale = (request as FastifyRequest & { locale?: Locale }).locale ?? 'en';
 
   if (error instanceof AppError) {
     const body: GovStackError = {
       code: error.errorCode,
-      message: error.message,
+      message: localizeMessage(error, locale),
       correlationId,
       timestamp,
       ...(error.details !== undefined && { details: error.details }),
@@ -116,7 +149,7 @@ export function errorHandler(
   if ('statusCode' in error && error.statusCode === 400) {
     const body: GovStackError = {
       code: ErrorCode.BAD_REQUEST,
-      message: error.message,
+      message: t('errors.badRequest', undefined, locale),
       correlationId,
       timestamp,
     };
@@ -141,7 +174,7 @@ export function errorHandler(
 
   const body: GovStackError = {
     code: ErrorCode.INTERNAL_ERROR,
-    message: 'An unexpected error occurred',
+    message: t('errors.internalError', undefined, locale),
     correlationId,
     timestamp,
   };

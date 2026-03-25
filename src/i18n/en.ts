@@ -83,6 +83,18 @@ export const en = {
     fiscalYear: 'Ethiopian Fiscal Year {{year}} E.C.',
     fiscalYearEnd: 'Fiscal year ends on {{date}}',
   },
+
+  // ── Application Status Labels ─────────────────────────────────────────
+  status: {
+    DRAFT: 'Draft',
+    PENDING: 'Pending',
+    IN_REVIEW: 'In Review',
+    APPROVED: 'Approved',
+    REJECTED: 'Rejected',
+    SENT_BACK: 'Sent Back',
+    WITHDRAWN: 'Withdrawn',
+    EXPIRED: 'Expired',
+  },
 } as const;
 
 /** Structural type for translation dictionaries — same shape, different string values. */

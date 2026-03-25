@@ -125,4 +125,55 @@ describe('i18n', () => {
       expect(result).toContain('ዓ.ም.');
     });
   });
+
+  describe('application status translations', () => {
+    it('translates PENDING to Amharic', () => {
+      expect(t('status.PENDING', undefined, 'am')).toBe('በመጠባበቅ ላይ');
+    });
+
+    it('translates APPROVED to Amharic', () => {
+      expect(t('status.APPROVED', undefined, 'am')).toBe('ጸድቋል');
+    });
+
+    it('translates REJECTED to Amharic', () => {
+      expect(t('status.REJECTED', undefined, 'am')).toBe('ውድቅ ተደርጓል');
+    });
+
+    it('translates IN_REVIEW to Amharic', () => {
+      expect(t('status.IN_REVIEW', undefined, 'am')).toBe('በግምገማ ላይ');
+    });
+
+    it('translates SENT_BACK to Amharic', () => {
+      expect(t('status.SENT_BACK', undefined, 'am')).toBe('ተመልሷል');
+    });
+
+    it('translates WITHDRAWN to Amharic', () => {
+      expect(t('status.WITHDRAWN', undefined, 'am')).toBe('ተሰርዟል');
+    });
+
+    it('translates EXPIRED to Amharic', () => {
+      expect(t('status.EXPIRED', undefined, 'am')).toBe('ጊዜው አልፏል');
+    });
+
+    it('translates DRAFT to Amharic', () => {
+      expect(t('status.DRAFT', undefined, 'am')).toBe('ረቂቅ');
+    });
+
+    it('all statuses have English translations', () => {
+      const statuses = [
+        'DRAFT',
+        'PENDING',
+        'IN_REVIEW',
+        'APPROVED',
+        'REJECTED',
+        'SENT_BACK',
+        'WITHDRAWN',
+        'EXPIRED',
+      ];
+      for (const status of statuses) {
+        const result = t(`status.${status}`, undefined, 'en');
+        expect(result).not.toBe(`status.${status}`);
+      }
+    });
+  });
 });
