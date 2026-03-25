@@ -11,7 +11,7 @@ export const en = {
 
   // ── Errors ──────────────────────────────────────────────────────────────
   errors: {
-    notFound: '{{resource}} \'{{id}}\' not found',
+    notFound: "{{resource}} '{{id}}' not found",
     unauthorized: 'Authentication required',
     forbidden: 'You do not have permission to perform this action',
     badRequest: 'Invalid request',
@@ -19,12 +19,12 @@ export const en = {
     unprocessable: 'Request could not be processed',
     internalError: 'An unexpected error occurred',
     tooManyRequests: 'Too many requests. Please try again later.',
-    invalidWorkflowTransition: 'Invalid workflow transition from \'{{from}}\' to \'{{to}}\'',
+    invalidWorkflowTransition: "Invalid workflow transition from '{{from}}' to '{{to}}'",
     invalidFormData: 'Form data validation failed',
     documentUploadFailed: 'Document upload failed',
     paymentRequired: 'Payment is required to proceed',
     faydaAuthFailed: 'Fayda authentication failed',
-    imHeaderInvalid: 'Invalid Information-Mediator-Client header: \'{{header}}\'',
+    imHeaderInvalid: "Invalid Information-Mediator-Client header: '{{header}}'",
   },
 
   // ── Application ─────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ export const en = {
     submitted: 'Application submitted successfully',
     updated: 'Application updated successfully',
     withdrawn: 'Application withdrawn',
-    cannotUpdate: 'Cannot update application in status \'{{status}}\'',
+    cannotUpdate: "Cannot update application in status '{{status}}'",
     onlyOwnerCanUpdate: 'You can only update your own applications',
     noWorkflowSteps: 'Service has no workflow steps configured',
     requirementsNotMet: 'Application data does not meet service requirements',
@@ -53,7 +53,8 @@ export const en = {
     insufficientCapital: 'Registered capital must be at least ETB {{minimum}} for {{entityType}}',
     invalidShareholderCount: 'A {{entityType}} requires at least {{minimum}} shareholders',
     sharePercentagesMustEqual100: 'Shareholder percentages must sum to exactly 100%',
-    highCapitalSurcharge: 'High-capital surcharge applies for registered capital above ETB 1,000,000',
+    highCapitalSurcharge:
+      'High-capital surcharge applies for registered capital above ETB 1,000,000',
   },
 
   // ── Trade License ──────────────────────────────────────────────────────
@@ -63,13 +64,15 @@ export const en = {
     gracePeriod: '30-day grace period after fiscal year end',
     licenseCancelled: 'License cancelled — renewal more than 6 months overdue',
     addressChangeRequired: 'New address details are required when business address has changed',
-    laborClearanceRequired: 'Businesses with more than 50 employees require clearance from the Ministry of Labor and Social Affairs',
+    laborClearanceRequired:
+      'Businesses with more than 50 employees require clearance from the Ministry of Labor and Social Affairs',
   },
 
   // ── Manufacturing Permit ───────────────────────────────────────────────
   manufacturingPermit: {
     esiaRequired: 'Environmental and Social Impact Assessment required for Category {{category}}',
-    waterPermitRequired: 'Water use permit required for daily usage above {{threshold}} cubic meters',
+    waterPermitRequired:
+      'Water use permit required for daily usage above {{threshold}} cubic meters',
     chemicalSafetyRequired: 'Chemical safety management plan required for hazardous materials',
     foodSafetyRequired: 'Food Safety Authority certification required',
     pharmaRequired: 'EFDA pharmaceutical manufacturing license required',

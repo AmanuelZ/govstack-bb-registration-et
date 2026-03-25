@@ -156,7 +156,13 @@ export function getRenewalFiscalContext(gregorianDate: Date): {
   return {
     ethYear: eth.year,
     fiscalYearEnd: end,
-    fiscalYearEndFormatted: formatEthiopianDate({ year: eth.year, month: 13, day: end.getDate() === 11 ? 6 : 5 }, 'en'),
-    fiscalYearEndFormattedAm: formatEthiopianDate({ year: eth.year, month: 13, day: end.getDate() === 11 ? 6 : 5 }, 'am'),
+    fiscalYearEndFormatted: formatEthiopianDate(
+      { year: eth.year, month: 13, day: end.getDate() === 11 ? 6 : 5 },
+      'en',
+    ),
+    fiscalYearEndFormattedAm: formatEthiopianDate(
+      { year: eth.year, month: 13, day: end.getDate() === 11 ? 6 : 5 },
+      'am',
+    ),
   };
 }

@@ -13,7 +13,7 @@ export const am: TranslationShape = {
 
   // ── ስህተቶች ──────────────────────────────────────────────────────────────
   errors: {
-    notFound: '{{resource}} \'{{id}}\' አልተገኘም',
+    notFound: "{{resource}} '{{id}}' አልተገኘም",
     unauthorized: 'ማረጋገጫ ያስፈልጋል',
     forbidden: 'ይህን ድርጊት ለማከናወን ፈቃድ የለዎትም',
     badRequest: 'ልክ ያልሆነ ጥያቄ',
@@ -21,12 +21,12 @@ export const am: TranslationShape = {
     unprocessable: 'ጥያቄው ሊሠራ አልቻለም',
     internalError: 'ያልተጠበቀ ስህተት ተከስቷል',
     tooManyRequests: 'በጣም ብዙ ጥያቄዎች። እባክዎ ቆየት ብለው ይሞክሩ።',
-    invalidWorkflowTransition: 'ከ\'{{from}}\' ወደ \'{{to}}\' ልክ ያልሆነ የሥራ ፍሰት ሽግግር',
+    invalidWorkflowTransition: "ከ'{{from}}' ወደ '{{to}}' ልክ ያልሆነ የሥራ ፍሰት ሽግግር",
     invalidFormData: 'የቅጽ ውሂብ ማረጋገጫ አልተሳካም',
     documentUploadFailed: 'ሰነድ መስቀል አልተሳካም',
     paymentRequired: 'ለመቀጠል ክፍያ ያስፈልጋል',
     faydaAuthFailed: 'የፋይዳ ማረጋገጫ አልተሳካም',
-    imHeaderInvalid: 'ልክ ያልሆነ የInformation-Mediator-Client ራስጌ: \'{{header}}\'',
+    imHeaderInvalid: "ልክ ያልሆነ የInformation-Mediator-Client ራስጌ: '{{header}}'",
   },
 
   // ── ማመልከቻ ──────────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ export const am: TranslationShape = {
     submitted: 'ማመልከቻው በተሳካ ሁኔታ ቀርቧል',
     updated: 'ማመልከቻው በተሳካ ሁኔታ ተሻሽሏል',
     withdrawn: 'ማመልከቻው ተሰርዟል',
-    cannotUpdate: 'ማመልከቻውን በ\'{{status}}\' ሁኔታ ማሻሻል አይቻልም',
+    cannotUpdate: "ማመልከቻውን በ'{{status}}' ሁኔታ ማሻሻል አይቻልም",
     onlyOwnerCanUpdate: 'የራስዎን ማመልከቻዎች ብቻ ማሻሻል ይችላሉ',
     noWorkflowSteps: 'አገልግሎቱ የተዋቀሩ የሥራ ፍሰት ደረጃዎች የሉትም',
     requirementsNotMet: 'የማመልከቻ መረጃው የአገልግሎት መስፈርቶችን አያሟላም',

@@ -45,11 +45,7 @@ export function getLocale(): Locale {
  * @param locale - Override locale for this call only
  * @returns Translated and interpolated string, or the key itself if not found
  */
-export function t(
-  key: string,
-  params?: Record<string, string | number>,
-  locale?: Locale,
-): string {
+export function t(key: string, params?: Record<string, string | number>, locale?: Locale): string {
   const lang = locale ?? currentLocale;
   const dict = translations[lang] ?? translations.en;
 

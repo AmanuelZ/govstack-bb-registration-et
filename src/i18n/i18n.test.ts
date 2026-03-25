@@ -105,7 +105,11 @@ describe('i18n', () => {
     });
 
     it('has business registration keys in Amharic', () => {
-      const result = t('businessRegistration.insufficientCapital', { minimum: 15000, entityType: 'PLC' }, 'am');
+      const result = t(
+        'businessRegistration.insufficientCapital',
+        { minimum: 15000, entityType: 'PLC' },
+        'am',
+      );
       expect(result).toContain('15000');
       expect(result).toContain('PLC');
     });
