@@ -12,11 +12,11 @@ Last updated: 2026-03-25
 | # | Title | Status | Notes |
 |---|-------|--------|-------|
 | 5 | Ethiopian fiscal calendar (ዓ.ም.) support | ✅ DONE | 31 tests, calendar utils, trade license integration |
+| 1 | Amharic localization | ✅ DONE | Accept-Language middleware, localized error handler, status labels, 31 new tests |
 
 ## In Progress
 | # | Title | Status | Remaining Work |
 |---|-------|--------|----------------|
-| 1 | Amharic localization | 🔧 IN PROGRESS | i18n foundation exists. TODO: wire into error handler, localize route responses, add Accept-Language middleware |
 | 2 | Integration tests with real PostgreSQL | 🔧 IN PROGRESS | docker-compose.test.yml exists. TODO: write actual integration tests hitting real DB for all CRUD endpoints |
 | 4 | Offline-first support | 🔧 IN PROGRESS | BullMQ dependency exists. TODO: implement request queue, sync-when-connected, draft storage, field officer docs |
 
@@ -25,7 +25,7 @@ Last updated: 2026-03-25
 |---|-------|--------|----------|
 | 3 | IM BB integration | 📋 PLANNED | Low — middleware exists, but need service registry + async patterns |
 | 6 | GovStack Consent BB integration | 📋 PLANNED | Medium |
-| 8 | Payment BB — Ethiopian providers | 📋 PLANNED | High |
+| 7 | Payment BB — Ethiopian providers | 📋 PLANNED | High |
 
 ## Future Ideas (not yet issues)
 | Title | Priority |
@@ -44,4 +44,5 @@ Last updated: 2026-03-25
 |------|--------------|-----------------|---------|
 | Mar 23 | Initial repo publish | — | feat: initial implementation |
 | Mar 25 | Created issues 1-5, implemented Ethiopian calendar, i18n foundation, CI fixes | #5 closed | 7ff340e, 2cebc0b, c28f35c |
-| Mar 25 | Reopened #1, #2, #3, #4. Created roadmap. Created issues #6, #8. | #1, #2, #3, #4 reopened | docs: add project roadmap |
+| Mar 25 | Reopened #1, #2, #3, #4. Created roadmap. Created issues #6, #7. | #1, #2, #3, #4 reopened | docs: add project roadmap |
+| Mar 25 | Completed Amharic localization: Accept-Language middleware, i18n error handler, status labels | #1 closed | 039e213, 3d51641 |
