@@ -1,6 +1,6 @@
 # Project Roadmap — govstack-bb-registration-et
 
-Last updated: 2026-03-25
+Last updated: 2026-03-27
 
 ## Status Legend
 - ✅ DONE — Implemented, tested, issue closed honestly
@@ -13,11 +13,11 @@ Last updated: 2026-03-25
 |---|-------|--------|-------|
 | 5 | Ethiopian fiscal calendar (ዓ.ም.) support | ✅ DONE | 31 tests, calendar utils, trade license integration |
 | 1 | Amharic localization | ✅ DONE | Accept-Language middleware, localized error handler, status labels, 31 new tests |
+| 2 | Integration tests with real PostgreSQL | ✅ DONE | 30 tests: ApplicationService (submit, list, getByFileId, update) + TaskService (list, getById, complete with APPROVE/REJECT/SEND_BACK), full workflow state machine, audit trail |
 
 ## In Progress
 | # | Title | Status | Remaining Work |
 |---|-------|--------|----------------|
-| 2 | Integration tests with real PostgreSQL | 🔧 IN PROGRESS | docker-compose.test.yml exists. TODO: write actual integration tests hitting real DB for all CRUD endpoints |
 | 4 | Offline-first support | 🔧 IN PROGRESS | BullMQ dependency exists. TODO: implement request queue, sync-when-connected, draft storage, field officer docs |
 
 ## Planned
@@ -46,3 +46,4 @@ Last updated: 2026-03-25
 | Mar 25 | Created issues 1-5, implemented Ethiopian calendar, i18n foundation, CI fixes | #5 closed | 7ff340e, 2cebc0b, c28f35c |
 | Mar 25 | Reopened #1, #2, #3, #4. Created roadmap. Created issues #6, #7. | #1, #2, #3, #4 reopened | docs: add project roadmap |
 | Mar 25 | Completed Amharic localization: Accept-Language middleware, i18n error handler, status labels | #1 closed | 039e213, 3d51641 |
+| Mar 27 | Integration tests: 30 tests for ApplicationService + TaskService against real PostgreSQL | #2 closed | c89bf25 |
