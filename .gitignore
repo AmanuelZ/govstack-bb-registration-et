@@ -6,3 +6,10 @@ uploads/
 *.log
 coverage/
 .nyc_output/
+
+# AI/planning documents — never commit
+CLAUDE*.md
+EXECUTION_PLAN.md
+ROADMAP.md
+*PROMPT*.md
+*_PLAN.md
