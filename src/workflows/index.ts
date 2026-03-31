@@ -1,9 +1,12 @@
 export { WorkflowEngine } from './engine.js';
 export {
   businessRegistrationDeterminants,
+  buildBusinessRegistrationDeterminants,
   validateShareholderCount,
   validateSharePercentages,
+  DEFAULT_REGULATORY_CONFIG,
 } from './business-registration.js';
+export type { RegulatoryConfig } from './business-registration.js';
 export {
   tradeLicenseRenewalDeterminants,
   calculateRenewalFee,

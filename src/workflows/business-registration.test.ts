@@ -1,9 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
   businessRegistrationDeterminants,
+  buildBusinessRegistrationDeterminants,
   validateShareholderCount,
   validateSharePercentages,
+  DEFAULT_REGULATORY_CONFIG,
 } from './business-registration.js';
+import type { RegulatoryConfig } from './business-registration.js';
 import { WorkflowEngine } from './engine.js';
 
 describe('businessRegistrationDeterminants', () => {
@@ -298,5 +301,159 @@ describe('validateSharePercentages', () => {
     const shareholders = [{ share_percentage: 70 }, { share_percentage: 20 }]; // 90%
     const result = validateSharePercentages(shareholders);
     expect(result.message).toContain('90.00%');
+  });
+});
+
+describe('buildBusinessRegistrationDeterminants (dynamic config)', () => {
+  it('uses default config when no override provided', () => {
+    const determinants = buildBusinessRegistrationDeterminants();
+    const result = WorkflowEngine.evaluate(determinants, {
+      entity_type: 'PLC',
+      registered_capital: 10000,
+      shareholders_count: 2,
+    });
+    expect(result.valid).toBe(false);
+    expect(result.violations.some((v) => v.determinantId === 'plc-min-capital')).toBe(true);
+  });
+
+  it('enforces custom PLC capital threshold from config', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      capitalRequirements: { ...DEFAULT_REGULATORY_CONFIG.capitalRequirements, PLC: 25000 },
+    };
+    const determinants = buildBusinessRegistrationDeterminants(config);
+
+    // 20000 was valid under old 15000 threshold, should fail under 25000
+    const result = WorkflowEngine.evaluate(determinants, {
+      entity_type: 'PLC',
+      registered_capital: 20000,
+      shareholders_count: 2,
+    });
+    expect(result.valid).toBe(false);
+    expect(result.violations.some((v) => v.determinantId === 'plc-min-capital')).toBe(true);
+    expect(result.violations[0]?.message).toContain('25,000');
+  });
+
+  it('passes PLC with capital meeting new higher threshold', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      capitalRequirements: { ...DEFAULT_REGULATORY_CONFIG.capitalRequirements, PLC: 25000 },
+    };
+    const determinants = buildBusinessRegistrationDeterminants(config);
+
+    const result = WorkflowEngine.evaluate(determinants, {
+      entity_type: 'PLC',
+      registered_capital: 30000,
+      shareholders_count: 2,
+    });
+    const capitalViolation = result.violations.find((v) => v.determinantId === 'plc-min-capital');
+    expect(capitalViolation).toBeUndefined();
+  });
+
+  it('enforces custom SC capital threshold', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      capitalRequirements: { ...DEFAULT_REGULATORY_CONFIG.capitalRequirements, SC: 100000 },
+    };
+    const determinants = buildBusinessRegistrationDeterminants(config);
+
+    const result = WorkflowEngine.evaluate(determinants, {
+      entity_type: 'SC',
+      registered_capital: 75000,
+      shareholders_count: 5,
+    });
+    expect(result.valid).toBe(false);
+    expect(result.violations.some((v) => v.determinantId === 'sc-min-capital')).toBe(true);
+  });
+
+  it('enforces custom high-capital surcharge threshold', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      highCapitalThreshold: 500000,
+      highCapitalSurcharge: 5000,
+    };
+    const determinants = buildBusinessRegistrationDeterminants(config);
+
+    const result = WorkflowEngine.evaluate(determinants, {
+      entity_type: 'PLC',
+      registered_capital: 600000,
+      shareholders_count: 2,
+    });
+    expect(result.additionalFees['high-capital-surcharge']).toBe(5000);
+  });
+
+  it('does not apply surcharge below custom threshold', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      highCapitalThreshold: 2000000,
+    };
+    const determinants = buildBusinessRegistrationDeterminants(config);
+
+    const result = WorkflowEngine.evaluate(determinants, {
+      entity_type: 'PLC',
+      registered_capital: 1500000,
+      shareholders_count: 2,
+    });
+    expect(result.additionalFees['high-capital-surcharge']).toBeUndefined();
+  });
+
+  it('still includes static rules (foreign docs, sector licenses) regardless of config', () => {
+    const config: RegulatoryConfig = {
+      capitalRequirements: { PLC: 50000 },
+      shareholderLimits: { PLC: { min: 3 } },
+      highCapitalThreshold: 2000000,
+      highCapitalSurcharge: 3000,
+    };
+    const determinants = buildBusinessRegistrationDeterminants(config);
+
+    const result = WorkflowEngine.evaluate(determinants, {
+      has_foreign_shareholders: true,
+      business_sector: 'K64',
+      registered_address: { region: 'Addis Ababa' },
+    });
+    expect(result.additionalDocuments).toContain('INVESTMENT_PERMIT');
+    expect(result.additionalDocuments).toContain('NBE_LICENSE');
+    expect(result.additionalDocuments).toContain('AACBE_CLEARANCE');
+  });
+});
+
+describe('validateShareholderCount with custom config', () => {
+  it('uses custom shareholder limits from config', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      shareholderLimits: {
+        ...DEFAULT_REGULATORY_CONFIG.shareholderLimits,
+        PLC: { min: 3 },
+      },
+    };
+    // 2 shareholders was valid under default, should fail under min: 3
+    const result = validateShareholderCount('PLC', 2, config);
+    expect(result.valid).toBe(false);
+    expect(result.message).toContain('3');
+  });
+
+  it('passes with sufficient shareholders under custom config', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      shareholderLimits: {
+        ...DEFAULT_REGULATORY_CONFIG.shareholderLimits,
+        PLC: { min: 3 },
+      },
+    };
+    const result = validateShareholderCount('PLC', 3, config);
+    expect(result.valid).toBe(true);
+  });
+
+  it('enforces custom max from config', () => {
+    const config: RegulatoryConfig = {
+      ...DEFAULT_REGULATORY_CONFIG,
+      shareholderLimits: {
+        ...DEFAULT_REGULATORY_CONFIG.shareholderLimits,
+        PLC: { min: 2, max: 5 },
+      },
+    };
+    const result = validateShareholderCount('PLC', 6, config);
+    expect(result.valid).toBe(false);
+    expect(result.message).toContain('5');
   });
 });

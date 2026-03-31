@@ -487,7 +487,21 @@ async function main() {
       ministryAm: 'የንግድ እና ኢንዱስትሪ ሚኒስቴር',
       estimatedDays: 5,
       validityMonths: 12,
-      metadata: {},
+      metadata: {
+        regulatoryConfig: {
+          capitalRequirements: { PLC: 15000, SC: 50000, OPPLC: 15000 },
+          shareholderLimits: {
+            PLC: { min: 2 },
+            SC: { min: 5 },
+            OPPLC: { min: 1, max: 1 },
+            GP: { min: 2 },
+            LP: { min: 2 },
+            LLP: { min: 2 },
+          },
+          highCapitalThreshold: 1000000,
+          highCapitalSurcharge: 2000,
+        },
+      },
     },
   });
 

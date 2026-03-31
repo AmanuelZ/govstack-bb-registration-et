@@ -10,14 +10,16 @@ import { AuditLogger } from '../../common/audit.js';
 import { logger } from '../../common/logger.js';
 import {
   WorkflowEngine,
-  businessRegistrationDeterminants,
+  buildBusinessRegistrationDeterminants,
   tradeLicenseRenewalDeterminants,
   manufacturingPermitDeterminants,
   validateShareholderCount,
   validateSharePercentages,
   calculateManufacturingPermitFee,
+  DEFAULT_REGULATORY_CONFIG,
 } from '../../workflows/index.js';
 import type { Determinant } from '../../workflows/engine.js';
+import type { RegulatoryConfig } from '../../workflows/index.js';
 
 export class ApplicationService {
   private readonly audit: AuditLogger;
@@ -56,8 +58,11 @@ export class ApplicationService {
       throw AppError.unprocessable('Service has no workflow steps configured');
     }
 
+    // Extract regulatory config from Service.metadata (falls back to Commercial Code defaults)
+    const regulatoryConfig = this.extractRegulatoryConfig(service.metadata);
+
     // Validate against workflow determinants
-    const determinants = this.getDeterminants(service.code);
+    const determinants = this.getDeterminants(service.code, regulatoryConfig);
     const evalResult = WorkflowEngine.evaluate(
       determinants,
       body.formData as Record<string, unknown>,
@@ -76,7 +81,11 @@ export class ApplicationService {
         | Array<{ share_percentage: number }>
         | undefined;
       if (entityType && Array.isArray(shareholders)) {
-        const countCheck = validateShareholderCount(entityType, shareholders.length);
+        const countCheck = validateShareholderCount(
+          entityType,
+          shareholders.length,
+          regulatoryConfig,
+        );
         if (!countCheck.valid) {
           throw AppError.unprocessable(countCheck.message ?? 'Invalid shareholder count', {
             field: 'shareholders',
@@ -354,10 +363,10 @@ export class ApplicationService {
     return updated;
   }
 
-  private getDeterminants(serviceCode: string): Determinant[] {
+  private getDeterminants(serviceCode: string, config?: RegulatoryConfig): Determinant[] {
     switch (serviceCode) {
       case 'et-business-registration-plc':
-        return businessRegistrationDeterminants;
+        return buildBusinessRegistrationDeterminants(config);
       case 'et-trade-license-renewal':
         return tradeLicenseRenewalDeterminants;
       case 'et-manufacturing-permit':
@@ -365,5 +374,34 @@ export class ApplicationService {
       default:
         return [];
     }
+  }
+
+  private extractRegulatoryConfig(metadata: unknown): RegulatoryConfig {
+    if (
+      metadata !== null &&
+      typeof metadata === 'object' &&
+      'regulatoryConfig' in metadata &&
+      metadata.regulatoryConfig !== null &&
+      typeof metadata.regulatoryConfig === 'object'
+    ) {
+      const rc = metadata.regulatoryConfig as Record<string, unknown>;
+      return {
+        capitalRequirements:
+          (rc['capitalRequirements'] as Record<string, number> | undefined) ??
+          DEFAULT_REGULATORY_CONFIG.capitalRequirements,
+        shareholderLimits:
+          (rc['shareholderLimits'] as Record<string, { min: number; max?: number }> | undefined) ??
+          DEFAULT_REGULATORY_CONFIG.shareholderLimits,
+        highCapitalThreshold:
+          typeof rc['highCapitalThreshold'] === 'number'
+            ? rc['highCapitalThreshold']
+            : DEFAULT_REGULATORY_CONFIG.highCapitalThreshold,
+        highCapitalSurcharge:
+          typeof rc['highCapitalSurcharge'] === 'number'
+            ? rc['highCapitalSurcharge']
+            : DEFAULT_REGULATORY_CONFIG.highCapitalSurcharge,
+      };
+    }
+    return DEFAULT_REGULATORY_CONFIG;
   }
 }

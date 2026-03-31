@@ -1,73 +1,87 @@
 import type { Determinant } from './engine.js';
 
 /**
- * Determinants for Ethiopian Business Registration (PLC/SC/OPPLC/GP/LP/LLP).
- * These rules implement the Ministry of Trade and Industry's requirements.
- *
- * Key rules per Commercial Code of Ethiopia (Proclamation 1243/2021):
- * - PLC: minimum 2 shareholders, minimum capital ETB 15,000
- * - SC (Share Company): minimum 5 shareholders, minimum capital ETB 50,000
- * - OPPLC (One-Person PLC): exactly 1 shareholder, minimum capital ETB 15,000
- * - GP/LP/LLP: minimum 2 partners, no minimum capital
+ * Regulatory configuration for business registration.
+ * These parameters are sourced from Service.metadata at runtime,
+ * allowing administrators to update thresholds (e.g., minimum capital)
+ * without code changes when legislation is amended.
  */
-export const businessRegistrationDeterminants: Determinant[] = [
-  // ── PLC Rules ────────────────────────────────────────────────────────────
-  {
-    id: 'plc-min-capital',
-    name: 'PLC minimum registered capital (ETB 15,000)',
-    field: 'entity_type',
-    operator: 'eq',
-    value: 'PLC',
-    effect: {
-      type: 'set_minimum',
-      target: 'registered_capital',
-      params: { minimum: 15000 },
-      message: 'PLC requires minimum registered capital of ETB 15,000 (Commercial Code Art. 510)',
-    },
-  },
-  {
-    id: 'plc-min-shareholders',
-    name: 'PLC minimum 2 shareholders',
-    field: 'entity_type',
-    operator: 'eq',
-    value: 'PLC',
-    effect: {
-      type: 'set_minimum',
-      target: 'shareholders_count',
-      params: { minimum: 2 },
-      message: 'PLC requires minimum 2 shareholders (Commercial Code Art. 510)',
-    },
-  },
+export interface RegulatoryConfig {
+  capitalRequirements: Record<string, number>; // entity_type → minimum ETB
+  shareholderLimits: Record<string, { min: number; max?: number }>;
+  highCapitalThreshold: number; // capital above this incurs surcharge
+  highCapitalSurcharge: number; // surcharge amount in ETB
+}
 
-  // ── SC (Share Company) Rules ─────────────────────────────────────────────
-  {
-    id: 'sc-min-capital',
-    name: 'Share Company minimum registered capital (ETB 50,000)',
-    field: 'entity_type',
-    operator: 'eq',
-    value: 'SC',
-    effect: {
-      type: 'set_minimum',
-      target: 'registered_capital',
-      params: { minimum: 50000 },
-      message:
-        'Share Company requires minimum registered capital of ETB 50,000 (Commercial Code Art. 295)',
-    },
+/**
+ * Default regulatory parameters per Commercial Code of Ethiopia (Proclamation 1243/2021).
+ * Used as fallback when Service.metadata does not specify overrides.
+ */
+export const DEFAULT_REGULATORY_CONFIG: RegulatoryConfig = {
+  capitalRequirements: {
+    PLC: 15000,
+    SC: 50000,
+    OPPLC: 15000,
   },
-  {
-    id: 'sc-min-shareholders',
-    name: 'Share Company minimum 5 shareholders',
-    field: 'entity_type',
-    operator: 'eq',
-    value: 'SC',
-    effect: {
-      type: 'set_minimum',
-      target: 'shareholders_count',
-      params: { minimum: 5 },
-      message: 'Share Company requires minimum 5 shareholders (Commercial Code Art. 295)',
-    },
+  shareholderLimits: {
+    PLC: { min: 2 },
+    SC: { min: 5 },
+    OPPLC: { min: 1, max: 1 },
+    GP: { min: 2 },
+    LP: { min: 2 },
+    LLP: { min: 2 },
   },
-  {
+  highCapitalThreshold: 1000000,
+  highCapitalSurcharge: 2000,
+};
+
+/**
+ * Build determinants for business registration from regulatory configuration.
+ * This factory allows the same engine to enforce different thresholds
+ * when legislation changes — just update Service.metadata.
+ */
+export function buildBusinessRegistrationDeterminants(
+  config: RegulatoryConfig = DEFAULT_REGULATORY_CONFIG,
+): Determinant[] {
+  const determinants: Determinant[] = [];
+
+  // ── Capital & Shareholder Rules (generated from config) ──────────────────
+  for (const [entityType, minCapital] of Object.entries(config.capitalRequirements)) {
+    determinants.push({
+      id: `${entityType.toLowerCase()}-min-capital`,
+      name: `${entityType} minimum registered capital (ETB ${minCapital.toLocaleString()})`,
+      field: 'entity_type',
+      operator: 'eq',
+      value: entityType,
+      effect: {
+        type: 'set_minimum',
+        target: 'registered_capital',
+        params: { minimum: minCapital },
+        message: `${entityType} requires minimum registered capital of ETB ${minCapital.toLocaleString()}`,
+      },
+    });
+  }
+
+  for (const [entityType, limits] of Object.entries(config.shareholderLimits)) {
+    if (limits.min > 0 && config.capitalRequirements[entityType] !== undefined) {
+      determinants.push({
+        id: `${entityType.toLowerCase()}-min-shareholders`,
+        name: `${entityType} minimum ${String(limits.min)} shareholders`,
+        field: 'entity_type',
+        operator: 'eq',
+        value: entityType,
+        effect: {
+          type: 'set_minimum',
+          target: 'shareholders_count',
+          params: { minimum: limits.min },
+          message: `${entityType} requires minimum ${String(limits.min)} shareholder(s)`,
+        },
+      });
+    }
+  }
+
+  // ── SC Prospectus (always required, independent of config) ───────────────
+  determinants.push({
     id: 'sc-prospectus',
     name: 'Share Company requires prospectus document',
     field: 'entity_type',
@@ -78,96 +92,86 @@ export const businessRegistrationDeterminants: Determinant[] = [
       target: 'PROSPECTUS',
       message: 'Share Companies must provide a prospectus for share subscription',
     },
-  },
+  });
 
-  // ── OPPLC (One-Person PLC) Rules ─────────────────────────────────────────
-  {
-    id: 'opplc-min-capital',
-    name: 'One-Person PLC minimum capital (ETB 15,000)',
-    field: 'entity_type',
-    operator: 'eq',
-    value: 'OPPLC',
-    effect: {
-      type: 'set_minimum',
-      target: 'registered_capital',
-      params: { minimum: 15000 },
-      message: 'One-Person PLC requires minimum registered capital of ETB 15,000',
-    },
-  },
-
-  // ── High-Capital Surcharge (any entity type) ─────────────────────────────
-  {
+  // ── High-Capital Surcharge ───────────────────────────────────────────────
+  determinants.push({
     id: 'high-capital-surcharge',
-    name: 'High-capital registration surcharge (> ETB 1,000,000)',
+    name: `High-capital registration surcharge (> ETB ${config.highCapitalThreshold.toLocaleString()})`,
     field: 'registered_capital',
     operator: 'gt',
-    value: 1000000,
+    value: config.highCapitalThreshold,
     effect: {
       type: 'add_fee',
       target: 'high-capital-surcharge',
-      params: { amount: 2000 },
-      message:
-        'Registrations with capital exceeding ETB 1,000,000 incur an additional processing fee of ETB 2,000',
+      params: { amount: config.highCapitalSurcharge },
+      message: `Registrations with capital exceeding ETB ${config.highCapitalThreshold.toLocaleString()} incur an additional processing fee of ETB ${config.highCapitalSurcharge.toLocaleString()}`,
     },
-  },
+  });
 
-  // ── Foreign Participation ─────────────────────────────────────────────────
-  {
-    id: 'foreign-investor-investment-permit',
-    name: 'Foreign shareholders require investment permit',
-    field: 'has_foreign_shareholders',
-    operator: 'eq',
-    value: true,
-    effect: {
-      type: 'add_document',
-      target: 'INVESTMENT_PERMIT',
-      message:
-        'Companies with foreign shareholders must provide an Ethiopian Investment Commission investment permit',
-    },
-  },
-  {
-    id: 'foreign-investor-notarization',
-    name: 'Foreign shareholders require notarized documents',
-    field: 'has_foreign_shareholders',
-    operator: 'eq',
-    value: true,
-    effect: {
-      type: 'add_document',
-      target: 'NOTARIZED_FOREIGN_DOCS',
-      message: 'Foreign national shareholder documents must be notarized and apostilled',
-    },
-  },
+  // ── Static Rules (not configurable — these are regulatory, not threshold-based) ──
 
-  // ── Restricted Sectors ────────────────────────────────────────────────────
-  {
-    id: 'financial-services-special-license',
-    name: 'Financial services sector requires NBE license',
-    field: 'business_sector',
-    operator: 'in',
-    value: ['K64', 'K65', 'K66'],
-    effect: {
-      type: 'add_document',
-      target: 'NBE_LICENSE',
-      message:
-        'Financial services businesses require a license from the National Bank of Ethiopia (NBE)',
+  // Foreign Participation
+  determinants.push(
+    {
+      id: 'foreign-investor-investment-permit',
+      name: 'Foreign shareholders require investment permit',
+      field: 'has_foreign_shareholders',
+      operator: 'eq',
+      value: true,
+      effect: {
+        type: 'add_document',
+        target: 'INVESTMENT_PERMIT',
+        message:
+          'Companies with foreign shareholders must provide an Ethiopian Investment Commission investment permit',
+      },
     },
-  },
-  {
-    id: 'media-mib-license',
-    name: 'Media sector requires Ministry of Information license',
-    field: 'business_sector',
-    operator: 'in',
-    value: ['J58', 'J59', 'J60'],
-    effect: {
-      type: 'add_document',
-      target: 'MIB_LICENSE',
-      message:
-        'Media businesses require a license from the Ministry of Information and Communication Technology',
+    {
+      id: 'foreign-investor-notarization',
+      name: 'Foreign shareholders require notarized documents',
+      field: 'has_foreign_shareholders',
+      operator: 'eq',
+      value: true,
+      effect: {
+        type: 'add_document',
+        target: 'NOTARIZED_FOREIGN_DOCS',
+        message: 'Foreign national shareholder documents must be notarized and apostilled',
+      },
     },
-  },
+  );
 
-  // ── Address Validation ────────────────────────────────────────────────────
-  {
+  // Restricted Sectors
+  determinants.push(
+    {
+      id: 'financial-services-special-license',
+      name: 'Financial services sector requires NBE license',
+      field: 'business_sector',
+      operator: 'in',
+      value: ['K64', 'K65', 'K66'],
+      effect: {
+        type: 'add_document',
+        target: 'NBE_LICENSE',
+        message:
+          'Financial services businesses require a license from the National Bank of Ethiopia (NBE)',
+      },
+    },
+    {
+      id: 'media-mib-license',
+      name: 'Media sector requires Ministry of Information license',
+      field: 'business_sector',
+      operator: 'in',
+      value: ['J58', 'J59', 'J60'],
+      effect: {
+        type: 'add_document',
+        target: 'MIB_LICENSE',
+        message:
+          'Media businesses require a license from the Ministry of Information and Communication Technology',
+      },
+    },
+  );
+
+  // Address Validation
+  determinants.push({
     id: 'addis-ababa-business-license',
     name: 'Addis Ababa businesses require city trade bureau clearance',
     field: 'registered_address.region',
@@ -179,42 +183,38 @@ export const businessRegistrationDeterminants: Determinant[] = [
       message:
         'Businesses registering in Addis Ababa require clearance from the Addis Ababa City Business and Economy Bureau',
     },
-  },
-];
+  });
+
+  return determinants;
+}
+
+/** Default determinants using current Commercial Code values. */
+export const businessRegistrationDeterminants: Determinant[] =
+  buildBusinessRegistrationDeterminants();
 
 /**
  * Validate shareholder count against entity type requirements.
  * Called separately because shareholders is an array, not a simple field.
+ * Accepts optional config override from Service.metadata; falls back to defaults.
  */
 export function validateShareholderCount(
   entityType: string,
   shareholderCount: number,
+  config: RegulatoryConfig = DEFAULT_REGULATORY_CONFIG,
 ): { valid: boolean; message?: string } {
-  const minimums: Record<string, number> = {
-    PLC: 2,
-    SC: 5,
-    OPPLC: 1,
-    GP: 2,
-    LP: 2,
-    LLP: 2,
-  };
-  const maximums: Record<string, number> = {
-    OPPLC: 1,
-  };
+  const limits = config.shareholderLimits[entityType];
+  if (!limits) return { valid: true };
 
-  const minimum = minimums[entityType];
-  const maximum = maximums[entityType];
-
-  if (minimum !== undefined && shareholderCount < minimum) {
+  if (shareholderCount < limits.min) {
     return {
       valid: false,
-      message: `${entityType} requires minimum ${String(minimum)} shareholder(s). Provided: ${String(shareholderCount)}`,
+      message: `${entityType} requires minimum ${String(limits.min)} shareholder(s). Provided: ${String(shareholderCount)}`,
     };
   }
-  if (maximum !== undefined && shareholderCount > maximum) {
+  if (limits.max !== undefined && shareholderCount > limits.max) {
     return {
       valid: false,
-      message: `${entityType} allows maximum ${String(maximum)} shareholder(s). Provided: ${String(shareholderCount)}`,
+      message: `${entityType} allows maximum ${String(limits.max)} shareholder(s). Provided: ${String(shareholderCount)}`,
     };
   }
   return { valid: true };
